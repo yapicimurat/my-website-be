@@ -1,8 +1,8 @@
 package com.yapicimurat.controller.response;
 
-import com.yapicimurat.dto.BaseDto;
+import com.yapicimurat.dto.BaseDTO;
 
-public abstract class DataResponse<T extends BaseDto> extends Response{
+public abstract class DataResponse<T extends BaseDTO> extends Response{
 
     protected T data;
     protected DataResponse(T data, boolean isSuccess, String message) {
