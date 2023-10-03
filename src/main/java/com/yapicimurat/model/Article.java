@@ -1,9 +1,12 @@
 package com.yapicimurat.model;
 
 import com.yapicimurat.model.abs.BaseModel;
+import com.yapicimurat.util.GeneralUtil;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "ARTICLE")
@@ -22,7 +25,7 @@ public class Article extends BaseModel {
             joinColumns = @JoinColumn(name = "ARTICLE_ID"),
             inverseJoinColumns = @JoinColumn(name = "ARTICLE_CATEGORY_ID")
     )
-    private List<Category> articleCategories;
+    private List<Category> categories;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "article")
     private List<Comment> comments;
@@ -32,6 +35,7 @@ public class Article extends BaseModel {
     }
 
     public void setTitle(String title) {
+        if(GeneralUtil.isNullOrEmpty(title)) return;
         this.title = title;
     }
 
@@ -40,6 +44,7 @@ public class Article extends BaseModel {
     }
 
     public void setDescription(String description) {
+        if(GeneralUtil.isNullOrEmpty(description)) return;
         this.description = description;
     }
 
@@ -48,6 +53,7 @@ public class Article extends BaseModel {
     }
 
     public void setHtmlContent(String htmlContent) {
+        if(GeneralUtil.isNullOrEmpty(htmlContent)) return;
         this.htmlContent = htmlContent;
     }
 
@@ -56,21 +62,24 @@ public class Article extends BaseModel {
     }
 
     public void setReadTimeInMinute(Byte readTimeInMinute) {
+        if(Objects.isNull(readTimeInMinute)) return;
         this.readTimeInMinute = readTimeInMinute;
     }
 
-    public List<Category> getArticleCategories() {
-        return articleCategories;
+    public List<Category> getCategories() {
+        return categories;
     }
 
-    public void setArticleCategories(List<Category> articleCategories) {
-        this.articleCategories = articleCategories;
+    public void setCategories(List<Category> categories) {
+        if(Objects.isNull(categories)) return;
+        this.categories = categories;
     }
     public List<Comment> getComments() {
         return comments;
     }
 
     public void setComments(List<Comment> comments) {
+        if(Objects.isNull(comments)) return;
         this.comments = comments;
     }
 }
