@@ -4,12 +4,13 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @MappedSuperclass
 public abstract class BaseModel {
     @Id
     @Column(name = "ID")
-    public Long id;
+    public UUID id;
     @Column(name = "CREATED_AT")
     public LocalDateTime createdAt;
     @Column(name = "UPDATED_AT")
@@ -21,11 +22,11 @@ public abstract class BaseModel {
     @Column(name = "IS_VISIBLE")
     public Boolean visible = true;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

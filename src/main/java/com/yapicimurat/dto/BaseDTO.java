@@ -1,20 +1,21 @@
 package com.yapicimurat.dto;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public abstract class BaseDTO {
-    private Long id;
+    private UUID id;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
     private Boolean isDeleted;
     private Boolean isVisible;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
