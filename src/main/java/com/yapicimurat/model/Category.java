@@ -1,6 +1,7 @@
 package com.yapicimurat.model;
 
 import com.yapicimurat.model.abs.BaseModel;
+import com.yapicimurat.util.GeneralUtil;
 
 import javax.persistence.*;
 
@@ -16,6 +17,7 @@ public class Category extends BaseModel {
     }
 
     public void setName(String name) {
+        if(GeneralUtil.isNullOrEmpty(name)) return;
         this.name = name;
     }
 
@@ -24,6 +26,7 @@ public class Category extends BaseModel {
     }
 
     public void setColor(String color) {
+        if(GeneralUtil.isNullOrEmpty(color)) return;
         this.color = color;
     }
 }
