@@ -1,9 +1,11 @@
 package com.yapicimurat.model;
 
 import com.yapicimurat.model.abs.BaseModel;
+import com.yapicimurat.util.GeneralUtil;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "COMMENT")
@@ -44,6 +46,7 @@ public class Comment extends BaseModel {
     }
 
     public void setName(String name) {
+        if(GeneralUtil.isNullOrEmpty(name)) return;
         this.name = name;
     }
 
@@ -52,6 +55,7 @@ public class Comment extends BaseModel {
     }
 
     public void setLastName(String lastName) {
+        if(GeneralUtil.isNullOrEmpty(lastName)) return;
         this.lastName = lastName;
     }
 
@@ -60,6 +64,7 @@ public class Comment extends BaseModel {
     }
 
     public void setEmail(String email) {
+        if(GeneralUtil.isNullOrEmpty(email)) return;
         this.email = email;
     }
 
@@ -68,14 +73,16 @@ public class Comment extends BaseModel {
     }
 
     public void setText(String text) {
+        if(GeneralUtil.isNullOrEmpty(text)) return;
         this.text = text;
     }
 
-    public Boolean getAnswer() {
+    public Boolean getIsAnswer() {
         return isAnswer;
     }
 
-    public void setAnswer(Boolean answer) {
+    public void setIsAnswer(Boolean answer) {
+        if(Objects.isNull(answer)) return;
         isAnswer = answer;
     }
 
