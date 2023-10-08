@@ -12,4 +12,5 @@ import java.util.UUID;
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
     @Query("SELECT category FROM Category as category WHERE  category.name = :name")
     Optional<Category> getByName(String name);
+
 }

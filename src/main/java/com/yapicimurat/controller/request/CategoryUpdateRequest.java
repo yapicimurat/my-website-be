@@ -1,6 +1,6 @@
-package com.yapicimurat.dto;
+package com.yapicimurat.controller.request;
 
-public class CategoryDTO extends BaseDTO {
+public class CategoryUpdateRequest {
     private String name;
     private String color;
 

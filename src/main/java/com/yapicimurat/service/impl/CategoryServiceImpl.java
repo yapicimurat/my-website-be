@@ -1,13 +1,13 @@
 package com.yapicimurat.service.impl;
 
 import com.yapicimurat.controller.request.CategoryCreateRequest;
+import com.yapicimurat.controller.request.CategoryUpdateRequest;
 import com.yapicimurat.exception.EntityAlreadyExistsException;
 import com.yapicimurat.exception.EntityNotFoundException;
 import com.yapicimurat.model.Category;
 import com.yapicimurat.repository.CategoryRepository;
 import com.yapicimurat.service.CategoryService;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +38,6 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
     }
-
     @Override
     public Optional<Category> getByIdOptional(UUID id) {
         return categoryRepository.findById(id);
@@ -74,6 +73,20 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         final Category category = new Category();
+        category.setName(requestBody.getName());
+        category.setColor(requestBody.getColor());
+
+        return categoryRepository.save(category).id;
+    }
+
+    @Override
+    public UUID updateById(UUID id, CategoryUpdateRequest requestBody) {
+        final Category category = getById(id);
+
+        if(getByName(requestBody.getName()).isPresent()) {
+            throw new EntityAlreadyExistsException();
+        }
+
         category.setName(requestBody.getName());
         category.setColor(requestBody.getColor());
 
