@@ -12,4 +12,8 @@ public final class ConverterUtil {
     public static List<UUID> stringListToUUIDList(List<String> stringIdList) {
         return stringIdList.stream().map(UUID::fromString).collect(Collectors.toList());
     }
+
+    public static List<String> uuidListToStringList(List<UUID> uuidList) {
+        return uuidList.stream().map(UUID::toString).collect(Collectors.toList());
+    }
 }
