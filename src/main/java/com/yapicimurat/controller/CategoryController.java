@@ -2,6 +2,7 @@ package com.yapicimurat.controller;
 
 import com.yapicimurat.controller.request.CategoryCreateRequest;
 import com.yapicimurat.controller.request.CategoryUpdateRequest;
+import com.yapicimurat.controller.response.DataResponse;
 import com.yapicimurat.dto.CategoryDTO;
 import com.yapicimurat.service.impl.CategoryFacade;
 import org.springframework.http.ResponseEntity;
@@ -19,27 +20,27 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryDTO>> getAll() {
+    public ResponseEntity<DataResponse<List<CategoryDTO>>> getAll() {
         return ResponseEntity.ok(categoryFacade.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDTO> getById(@PathVariable("id") String id) {
+    public ResponseEntity<DataResponse<CategoryDTO>> getById(@PathVariable("id") String id) {
         return ResponseEntity.ok(categoryFacade.getById(id));
     }
 
     @PostMapping
-    public ResponseEntity<String> create(@RequestBody CategoryCreateRequest requestBody) {
+    public ResponseEntity<DataResponse<String>> create(@RequestBody CategoryCreateRequest requestBody) {
         return ResponseEntity.ok(categoryFacade.create(requestBody));
     }
 
     @PostMapping("/create-all")
-    public ResponseEntity<List<String>> createAll(@RequestBody List<CategoryCreateRequest> requestBody) {
+    public ResponseEntity<DataResponse<List<String>>> createAll(@RequestBody List<CategoryCreateRequest> requestBody) {
         return ResponseEntity.ok(categoryFacade.createAll(requestBody));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateById(@PathVariable String id, @RequestBody CategoryUpdateRequest requestBody) {
+    public ResponseEntity<DataResponse<String>> updateById(@PathVariable("id") String id, @RequestBody CategoryUpdateRequest requestBody) {
         return ResponseEntity.ok(categoryFacade.updateById(id, requestBody));
     }
 }
