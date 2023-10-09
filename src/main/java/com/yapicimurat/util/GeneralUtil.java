@@ -11,7 +11,7 @@ public final class GeneralUtil {
     private GeneralUtil() {}
 
     public static boolean isNullOrEmpty(String str) {
-        return str.isEmpty() || str == null;
+        return str == null || str.isEmpty();
     }
 
     public static <T extends BaseDTO, S extends BaseModel> List<T> mapEntityListToDTOList(
