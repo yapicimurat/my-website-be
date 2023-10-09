@@ -2,6 +2,8 @@ package com.yapicimurat.controller.request;
 
 import org.hibernate.validator.constraints.Length;
 
+import java.util.List;
+
 public class ArticleUpdateRequest {
     @Length(min = 10, max = 300)
     private String title;
@@ -10,6 +12,16 @@ public class ArticleUpdateRequest {
     @Length(min = 10, max = 5000)
     private String htmlContent;
     private Byte readTimeInMinute;
+
+    private List<String> categories;
+
+    public List<String> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<String> categories) {
+        this.categories = categories;
+    }
 
     public String getTitle() {
         return title;
