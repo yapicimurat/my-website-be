@@ -2,6 +2,7 @@ package com.yapicimurat.controller;
 
 import com.yapicimurat.controller.request.ArticleCreateRequest;
 import com.yapicimurat.controller.request.ArticleUpdateRequest;
+import com.yapicimurat.controller.response.DataResponse;
 import com.yapicimurat.dto.ArticleDTO;
 import com.yapicimurat.service.impl.ArticleFacade;
 import org.springframework.http.ResponseEntity;
@@ -18,32 +19,24 @@ public class ArticleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ArticleDTO>> getAll() {
-        final List<ArticleDTO> articleDTOList = articleFacade.getAll();
-
-        return ResponseEntity.ok(articleDTOList);
+    public ResponseEntity<DataResponse<List<ArticleDTO>>> getAll() {
+        return ResponseEntity.ok(articleFacade.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ArticleDTO> getById(@PathVariable("id") String id) {
-        final ArticleDTO articleDTO = articleFacade.getById(id);
-
-        return ResponseEntity.ok(articleDTO);
+    public ResponseEntity<DataResponse<ArticleDTO>> getById(@PathVariable("id") String id) {
+        return ResponseEntity.ok(articleFacade.getById(id));
     }
 
     @PostMapping
-    public ResponseEntity<String> create(@RequestBody ArticleCreateRequest requestBody) {
-        final String articleId = articleFacade.create(requestBody);
-
-        return ResponseEntity.ok(articleId);
+    public ResponseEntity<DataResponse<String>> create(@RequestBody ArticleCreateRequest requestBody) {
+        return ResponseEntity.ok(articleFacade.create(requestBody));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ArticleDTO> updateById(@PathVariable("id") String id,
+    public ResponseEntity<DataResponse<ArticleDTO>> updateById(@PathVariable("id") String id,
                                                  @RequestBody ArticleUpdateRequest requestBody) {
-        final ArticleDTO articleId = articleFacade.updateById(id, requestBody);
-
-        return ResponseEntity.ok(articleId);
+        return ResponseEntity.ok(articleFacade.updateById(id, requestBody));
     }
 
 }
