@@ -12,6 +12,7 @@ import java.util.UUID;
 public interface ArticleService {
     List<Article> getAll();
     Boolean isTitleUsedByAnotherArticle(String title) throws EntityAlreadyExistsException;
+    Boolean isTitleUsedByAnotherArticleWithId(UUID id, String title) throws EntityAlreadyExistsException;
     Optional<Article> getByIdOptional(UUID id);
     Article getById(UUID id);
     String create(ArticleCreateRequest requestBody);
