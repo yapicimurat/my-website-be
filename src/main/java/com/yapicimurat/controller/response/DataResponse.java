@@ -1,8 +1,6 @@
 package com.yapicimurat.controller.response;
 
-import com.yapicimurat.dto.BaseDTO;
-
-public abstract class DataResponse<T extends BaseDTO> extends Response{
+public abstract class DataResponse<T> extends Response{
 
     protected T data;
     protected DataResponse(T data, boolean isSuccess, String message) {
@@ -10,5 +8,11 @@ public abstract class DataResponse<T extends BaseDTO> extends Response{
         this.data = data;
     }
 
+    public T getData() {
+        return data;
+    }
 
+    public void setData(T data) {
+        this.data = data;
+    }
 }
