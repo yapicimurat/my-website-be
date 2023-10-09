@@ -2,12 +2,10 @@ package com.yapicimurat.service.impl;
 
 import com.yapicimurat.controller.request.ArticleCreateRequest;
 import com.yapicimurat.controller.request.ArticleUpdateRequest;
-import com.yapicimurat.dto.BaseDTO;
 import com.yapicimurat.exception.EntityAlreadyExistsException;
 import com.yapicimurat.exception.EntityNotFoundException;
 import com.yapicimurat.model.Article;
 import com.yapicimurat.model.Category;
-import com.yapicimurat.model.abs.BaseModel;
 import com.yapicimurat.repository.ArticleRepository;
 import com.yapicimurat.service.ArticleService;
 import com.yapicimurat.service.CategoryService;
@@ -38,6 +36,11 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public Boolean isTitleUsedByAnotherArticle(String title) {
         return articleRepository.isTitleUsedByAnother(title);
+    }
+
+    @Override
+    public Boolean isTitleUsedByAnotherArticleWithId(UUID id, String title) throws EntityAlreadyExistsException {
+        return articleRepository.isTitleUsedByAnotherWithId(id, title);
     }
 
     @Override
@@ -72,17 +75,20 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public Article update(String id, ArticleUpdateRequest requestBody) {
-        Article article = getById(UUID.fromString(id));
+        final Article article = getById(UUID.fromString(id));
+        final boolean isTitleUsedByAnotherArticle = isTitleUsedByAnotherArticleWithId(article.getId(), requestBody.getTitle());
 
-        final boolean isTitleUsedByAnotherArticle = isTitleUsedByAnotherArticle(requestBody.getTitle());
         if(isTitleUsedByAnotherArticle){
             throw new EntityAlreadyExistsException();
         }
+
+        final List<Category> categories = categoryService.getByIdList(ConverterUtil.stringListToUUIDList(requestBody.getCategories()));
 
         article.setTitle(requestBody.getTitle());
         article.setDescription(requestBody.getDescription());
         article.setHtmlContent(requestBody.getHtmlContent());
         article.setReadTimeInMinute(requestBody.getReadTimeInMinute());
+        article.setCategories(categories);
 
         return articleRepository.save(article);
     }
