@@ -11,8 +11,15 @@ import java.util.UUID;
 public interface ArticleRepository extends JpaRepository<Article, UUID> {
     @Query("SELECT " +
             "CASE " +
-            "   WHEN LOWER(article.title) != NULL THEN TRUE" +
+            "   WHEN COUNT(article.title) = 1 THEN TRUE" +
             "   ELSE FALSE " +
-            "END FROM Article as article WHERE article.title = LOWER(:title)")
+            "END FROM Article as article WHERE article.id != :id AND article.title = LOWER(:title)")
     boolean isTitleUsedByAnother(String title);
+
+    @Query("SELECT " +
+            "CASE " +
+            "   WHEN COUNT(article.title) = 1 THEN TRUE" +
+            "   ELSE FALSE " +
+            "END FROM Article as article WHERE article.id != :id AND article.title = LOWER(:title)")
+    boolean isTitleUsedByAnotherWithId(UUID id, String title);
 }
