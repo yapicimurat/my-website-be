@@ -4,12 +4,17 @@ import com.yapicimurat.controller.request.ArticleCreateRequest;
 import com.yapicimurat.controller.request.ArticleUpdateRequest;
 import com.yapicimurat.controller.response.DataResponse;
 import com.yapicimurat.dto.ArticleDTO;
-import com.yapicimurat.service.impl.ArticleFacade;
+import com.yapicimurat.dto.Pageable;
+import com.yapicimurat.dto.PageableDTO;
+import com.yapicimurat.model.Article;
+import com.yapicimurat.service.impl.facade.ArticleFacade;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+
+import javax.validation.Valid;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 @RequestMapping(path = "/api/article")
 public class ArticleController {
     private final ArticleFacade articleFacade;
@@ -19,17 +24,17 @@ public class ArticleController {
     }
 
     @GetMapping
-    public ResponseEntity<DataResponse<List<ArticleDTO>>> getAll() {
-        return ResponseEntity.ok(articleFacade.getAll());
+    public ResponseEntity<DataResponse<PageableDTO<ArticleDTO>>> getAll(@RequestParam(value = "page", required = false) Integer currentPage) {
+        return ResponseEntity.ok(articleFacade.getAll(currentPage));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DataResponse<ArticleDTO>> getById(@PathVariable("id") String id) {
+    public ResponseEntity<DataResponse<ArticleDTO>> getById(@Valid @PathVariable("id") String id) {
         return ResponseEntity.ok(articleFacade.getById(id));
     }
 
     @PostMapping
-    public ResponseEntity<DataResponse<String>> create(@RequestBody ArticleCreateRequest requestBody) {
+    public ResponseEntity<DataResponse<String>> create(@Valid @RequestBody ArticleCreateRequest requestBody) {
         return ResponseEntity.ok(articleFacade.create(requestBody));
     }
 

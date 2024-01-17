@@ -1,16 +1,18 @@
-package com.yapicimurat.service.impl;
+package com.yapicimurat.service.impl.facade;
 
 import com.yapicimurat.controller.request.ArticleCreateRequest;
 import com.yapicimurat.controller.request.ArticleUpdateRequest;
 import com.yapicimurat.controller.response.DataResponse;
 import com.yapicimurat.controller.response.SuccessDataResponse;
 import com.yapicimurat.dto.ArticleDTO;
+import com.yapicimurat.dto.Pageable;
+import com.yapicimurat.dto.PageableDTO;
 import com.yapicimurat.model.Article;
 import com.yapicimurat.service.ArticleService;
-import com.yapicimurat.util.GeneralUtil;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
-import java.util.List;
+
 import java.util.UUID;
 
 @Service
@@ -22,12 +24,10 @@ public class ArticleFacade {
         this.modelMapper = modelMapper;
     }
 
-    public DataResponse<List<ArticleDTO>> getAll() {
-        final List<Article> articleList = articleService.getAll();
-        final List<ArticleDTO> articleDTOList = GeneralUtil
-                .mapEntityListToDTOList(articleList, ArticleDTO.class, modelMapper);
+    public DataResponse<PageableDTO<ArticleDTO>> getAll(Integer currentPage) {
+        Pageable<Article> allArticlePageable = articleService.getAll(currentPage);
 
-        return new SuccessDataResponse<>(articleDTOList, "");
+        return new SuccessDataResponse<>(modelMapper.map(allArticlePageable, PageableDTO.class), "");
     }
 
     public DataResponse<ArticleDTO> getById(String id) {

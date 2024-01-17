@@ -1,4 +1,10 @@
 package com.yapicimurat.exception;
 
-public class EntityAlreadyExistsException extends RuntimeException{
+import com.yapicimurat.constant.ExceptionConstant;
+import org.springframework.http.HttpStatus;
+
+public class EntityAlreadyExistsException extends EntityException{
+    public EntityAlreadyExistsException() {
+        super(HttpStatus.CONFLICT, ExceptionConstant.ENTITY_ALREADY_EXISTS);
+    }
 }

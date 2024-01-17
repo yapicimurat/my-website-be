@@ -2,13 +2,21 @@ package com.yapicimurat.dto;
 
 import java.util.List;
 
-public class ArticleDTO extends BaseDTO {
+public class ArticleDTO{
     private String title;
     private String description;
     private String htmlContent;
+    private String coverImageURL;
     private Byte readTimeInMinute;
     private List<CategoryDTO> categories;
     private List<CommentDTO> comments;
+    public String getCoverImageURL() {
+        return coverImageURL;
+    }
+
+    public void setCoverImageURL(String coverImageURL) {
+        this.coverImageURL = coverImageURL;
+    }
 
     public String getTitle() {
         return title;

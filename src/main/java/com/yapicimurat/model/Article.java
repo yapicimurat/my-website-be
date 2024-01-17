@@ -1,9 +1,8 @@
 package com.yapicimurat.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.yapicimurat.model.abs.BaseModel;
 import com.yapicimurat.util.GeneralUtil;
-import org.hibernate.annotations.DynamicUpdate;
-
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
@@ -17,6 +16,10 @@ public class Article extends BaseModel {
     private String description;
     @Column(name = "HTML_CONTENT", length = 5000)
     private String htmlContent;
+
+    @Column(name = "COVER_IMAGE_URL", length = 1000)
+    private String coverImageURL;
+
     @Column(name = "READ_TIME_IN_MINUTES")
     private Byte readTimeInMinute;
     @ManyToMany(fetch = FetchType.LAZY)
@@ -28,6 +31,7 @@ public class Article extends BaseModel {
     private List<Category> categories;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "article")
+    @JsonManagedReference
     private List<Comment> comments;
 
     public String getTitle() {
@@ -81,5 +85,13 @@ public class Article extends BaseModel {
     public void setComments(List<Comment> comments) {
         if(Objects.isNull(comments)) return;
         this.comments = comments;
+    }
+
+    public String getCoverImageURL() {
+        return coverImageURL;
+    }
+
+    public void setCoverImageURL(String coverImageURL) {
+        this.coverImageURL = coverImageURL;
     }
 }

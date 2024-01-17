@@ -1,13 +1,10 @@
-package com.yapicimurat.dto;
+package com.yapicimurat.controller.request;
 
-
-public class CommentDTO {
+public class CommentUpdateRequest {
     private String name;
     private String lastName;
     private String email;
     private String text;
-    private Boolean isAnswer;
-    private String parentCommentId;
 
     public String getName() {
         return name;
@@ -39,21 +36,5 @@ public class CommentDTO {
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    public Boolean getAnswer() {
-        return isAnswer;
-    }
-
-    public void setAnswer(Boolean answer) {
-        isAnswer = answer;
-    }
-
-    public String getParentCommentId() {
-        return parentCommentId;
-    }
-
-    public void setParentCommentId(String parentCommentId) {
-        this.parentCommentId = parentCommentId;
     }
 }

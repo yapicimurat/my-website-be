@@ -2,24 +2,23 @@ package com.yapicimurat.controller.request;
 
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class ArticleCreateRequest {
-    @NotNull
     @NotBlank
     @Length(min = 10, max = 300)
     private String title;
-    @NotNull
     @NotBlank
     @Length(min = 10, max = 500)
     private String description;
-    @NotNull
     @NotBlank
     @Length(min = 10, max = 5000)
     private String htmlContent;
     @NotNull
+    @Min(value = 1)
     private Byte readTimeInMinute;
     @NotNull
     private List<String> categoryIdList;

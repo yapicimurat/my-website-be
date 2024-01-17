@@ -1,4 +1,4 @@
-package com.yapicimurat.service.impl;
+package com.yapicimurat.service.impl.facade;
 
 import com.yapicimurat.controller.request.CategoryCreateRequest;
 import com.yapicimurat.controller.request.CategoryUpdateRequest;

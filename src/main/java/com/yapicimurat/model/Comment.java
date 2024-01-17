@@ -1,8 +1,9 @@
 package com.yapicimurat.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.yapicimurat.model.abs.BaseModel;
 import com.yapicimurat.util.GeneralUtil;
-
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
@@ -16,21 +17,17 @@ public class Comment extends BaseModel {
     private String lastName;
     @Column(name = "EMAIL", length = 50)
     private String email;
-    @Column(name = "COMMENT", length = 3000)
+    @Column(name = "TEXT", length = 3000)
     private String text;
     @Column(name = "IS_ANSWER")
     private Boolean isAnswer = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "ARTICLE_COMMENT",
-            joinColumns = @JoinColumn(name = "ARTICLE_ID"),
-            inverseJoinColumns = @JoinColumn(name = "COMMENT_ID")
-
-    )
+    @JsonBackReference
     private Article article;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentComment")
+    @JsonBackReference
     private List<Comment> comments;
 
     @ManyToOne(fetch = FetchType.LAZY)

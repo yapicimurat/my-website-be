@@ -1,9 +1,27 @@
 package com.yapicimurat.controller.request;
 
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 public class CommentCreateRequest {
+    @NotNull
+    @NotBlank
+    @Length(min = 3)
     private String name;
+    @NotNull
+    @NotBlank
+    @Length(min = 3)
     private String lastName;
+    @NotNull
+    @NotBlank
+    @Email
     private String email;
+    @NotNull
+    @NotBlank
+    @Length(min = 3)
     private String text;
     private Boolean isAnswer;
     private String parentCommentId;

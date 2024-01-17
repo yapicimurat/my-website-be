@@ -1,13 +1,13 @@
 package com.yapicimurat.controller.request;
 
-import javax.validation.constraints.Min;
+import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 public class CategoryCreateRequest {
     @NotNull
     @NotBlank
-    @Min(value = 3)
+    @Length(min = 3)
     private String name;
     @NotNull
     @NotBlank

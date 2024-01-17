@@ -10,16 +10,22 @@ import com.yapicimurat.repository.ArticleRepository;
 import com.yapicimurat.service.ArticleService;
 import com.yapicimurat.service.CategoryService;
 import com.yapicimurat.util.ConverterUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ArticleServiceImpl implements ArticleService {
     private final CategoryService categoryService;
 
     private final ArticleRepository articleRepository;
+
+    private final int TOTAL_PER_PAGE = 1;
 
     public ArticleServiceImpl(CategoryService categoryService,
                               ArticleRepository articleRepository) {
@@ -28,9 +34,22 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<Article> getAll() {
+    public com.yapicimurat.dto.Pageable getAll(Integer currentPage) {
+        currentPage = currentPage != null ? currentPage : 0;
+        
+        Pageable x = PageRequest.of(currentPage, TOTAL_PER_PAGE);
+        Page<Article> allArticlesPage = articleRepository.findAll(x);
 
-        return articleRepository.findAll();
+        List<Article> articles = allArticlesPage.get().collect(Collectors.toList());
+
+        return new com.yapicimurat.dto.Pageable(
+                articles,
+                allArticlesPage.getTotalPages(),
+                TOTAL_PER_PAGE,
+                currentPage,
+                allArticlesPage.hasNext(),
+                allArticlesPage.hasPrevious()
+        );
     }
 
     @Override

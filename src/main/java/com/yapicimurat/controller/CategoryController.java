@@ -4,10 +4,11 @@ import com.yapicimurat.controller.request.CategoryCreateRequest;
 import com.yapicimurat.controller.request.CategoryUpdateRequest;
 import com.yapicimurat.controller.response.DataResponse;
 import com.yapicimurat.dto.CategoryDTO;
-import com.yapicimurat.service.impl.CategoryFacade;
+import com.yapicimurat.service.impl.facade.CategoryFacade;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -30,7 +31,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<DataResponse<String>> create(@RequestBody CategoryCreateRequest requestBody) {
+    public ResponseEntity<DataResponse<String>> create(@Valid @RequestBody CategoryCreateRequest requestBody) {
         return ResponseEntity.ok(categoryFacade.create(requestBody));
     }
 
