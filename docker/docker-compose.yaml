@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  mysql-db:
+    image: website_mysql:latest
+    container_name: website_mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - my_bridge_network
+networks:
+  my_bridge_network:
+    driver: bridge

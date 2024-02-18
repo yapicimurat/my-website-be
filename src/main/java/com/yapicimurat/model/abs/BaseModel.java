@@ -4,7 +4,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -15,21 +14,26 @@ import java.util.UUID;
 @MappedSuperclass
 public abstract class BaseModel {
     @Id
-    @GeneratedValue(generator = "uuid4")
-    @GenericGenerator(name = "uuid4", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "ID", columnDefinition = "varchar(36)")
     @Type(type = "uuid-char")
+    @GeneratedValue(generator = "uuid4")
+    @Column(name = "ID", columnDefinition = "varchar(36)")
+    @GenericGenerator(name = "uuid4", strategy = "org.hibernate.id.UUIDGenerator")
     public UUID id;
+
     @CreationTimestamp
     @Column(name = "CREATED_AT")
     public LocalDateTime createdAt;
+
     @UpdateTimestamp
     @Column(name = "UPDATED_AT")
     public LocalDateTime updatedAt;
+
     @Column(name = "DELETED_AT")
     public LocalDateTime deletedAt;
+
     @Column(name = "IS_DELETED")
     public Boolean isDeleted = false;
+
     @Column(name = "IS_VISIBLE")
     public Boolean visible = true;
 

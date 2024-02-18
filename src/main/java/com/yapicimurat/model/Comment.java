@@ -1,41 +1,49 @@
 package com.yapicimurat.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.yapicimurat.model.abs.BaseModel;
-import com.yapicimurat.util.GeneralUtil;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "COMMENT")
 public class Comment extends BaseModel {
-    @Column(name = "NAME", length = 30)
+    @NotBlank
+    @Size(max = 30)
+    @Column(name = "NAME", length = 30, nullable = false)
     private String name;
-    @Column(name = "LAST_NAME", length = 30)
-    private String lastName;
-    @Column(name = "EMAIL", length = 50)
-    private String email;
-    @Column(name = "TEXT", length = 3000)
-    private String text;
-    @Column(name = "IS_ANSWER")
-    private Boolean isAnswer = false;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @NotBlank
+    @Size(max = 30)
+    @Column(name = "LAST_NAME", length = 30, nullable = false)
+    private String lastName;
+
+    @NotBlank
+    @Size(max = 100)
+    @Column(name = "EMAIL", length = 100, nullable = false)
+    private String email;
+
+    @NotBlank
+    @Size(max = 3000)
+    @Column(name = "TEXT", length = 3000, nullable = false)
+    private String text;
+
+    @Column(name = "IS_ANSWER")
+    private boolean isAnswer = false;
+
     @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY)
     private Article article;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentComment")
     @JsonBackReference
-    private List<Comment> comments;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentComment")
+    private List<Comment> answers;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "COMMENT_ANSWER",
-            joinColumns = @JoinColumn(name = "PARENT_COMMENT_ID"),
-            inverseJoinColumns = @JoinColumn(name = "ANSWER_COMMENT_ID")
-    )
     private Comment parentComment;
 
     public String getName() {
@@ -43,7 +51,7 @@ public class Comment extends BaseModel {
     }
 
     public void setName(String name) {
-        if(GeneralUtil.isNullOrEmpty(name)) return;
+        if(Objects.isNull(name)) return;
         this.name = name;
     }
 
@@ -52,7 +60,7 @@ public class Comment extends BaseModel {
     }
 
     public void setLastName(String lastName) {
-        if(GeneralUtil.isNullOrEmpty(lastName)) return;
+        if(Objects.isNull(name)) return;
         this.lastName = lastName;
     }
 
@@ -61,7 +69,7 @@ public class Comment extends BaseModel {
     }
 
     public void setEmail(String email) {
-        if(GeneralUtil.isNullOrEmpty(email)) return;
+        if(Objects.isNull(name)) return;
         this.email = email;
     }
 
@@ -70,16 +78,15 @@ public class Comment extends BaseModel {
     }
 
     public void setText(String text) {
-        if(GeneralUtil.isNullOrEmpty(text)) return;
+        if(Objects.isNull(name)) return;
         this.text = text;
     }
 
-    public Boolean getIsAnswer() {
+    public boolean getIsAnswer() {
         return isAnswer;
     }
 
-    public void setIsAnswer(Boolean answer) {
-        if(Objects.isNull(answer)) return;
+    public void setIsAnswer(boolean answer) {
         isAnswer = answer;
     }
 
@@ -91,12 +98,12 @@ public class Comment extends BaseModel {
         this.article = article;
     }
 
-    public List<Comment> getComments() {
-        return comments;
+    public List<Comment> getAnswers() {
+        return answers;
     }
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
+    public void setAnswers(List<Comment> comments) {
+        this.answers = comments;
     }
 
     public Comment getParentComment() {

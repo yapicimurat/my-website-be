@@ -1,26 +1,30 @@
 package com.yapicimurat.model;
 
 import com.yapicimurat.model.abs.BaseModel;
-import com.yapicimurat.util.GeneralUtil;
-import org.hibernate.validator.constraints.Length;
-
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.Objects;
 
 @Entity
 @Table(name = "CATEGORY")
 public class Category extends BaseModel {
-    @Column(name = "NAME", length = 100)
+    @NotBlank
     @Size(max = 100)
+    @Column(name = "NAME", length = 100, nullable = false)
     private String name;
-    @Column(name = "COLOR", length = 50)
+
+    @NotBlank
+    @Size(max = 9)
+    @Column(name = "COLOR", length = 9, nullable = false)
     private String color;
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
-        if(GeneralUtil.isNullOrEmpty(name)) return;
+        if(Objects.isNull(name)) return;
         this.name = name;
     }
 
@@ -29,7 +33,7 @@ public class Category extends BaseModel {
     }
 
     public void setColor(String color) {
-        if(GeneralUtil.isNullOrEmpty(color)) return;
+        if(Objects.isNull(color)) return;
         this.color = color;
     }
 }

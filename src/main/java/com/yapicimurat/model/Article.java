@@ -2,36 +2,49 @@ package com.yapicimurat.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.yapicimurat.model.abs.BaseModel;
-import com.yapicimurat.util.GeneralUtil;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "ARTICLE")
 public class Article extends BaseModel {
-    @Column(name = "TITLE", length = 300)
+    @NotBlank
+    @Size(max = 300)
+    @Column(name = "TITLE", length = 300, nullable = false)
     private String title;
-    @Column(name = "DESCRIPTION", length = 500)
+
+    @NotBlank
+    @Size(max = 500)
+    @Column(name = "DESCRIPTION", length = 500, nullable = false)
     private String description;
-    @Column(name = "HTML_CONTENT", length = 5000)
+
+    @NotBlank
+    @Size(max = 5000)
+    @Column(name = "HTML_CONTENT", length = 5000, nullable = false)
     private String htmlContent;
 
+    @Size(max = 1000)
     @Column(name = "COVER_IMAGE_URL", length = 1000)
     private String coverImageURL;
 
+    @NotNull
     @Column(name = "READ_TIME_IN_MINUTES")
-    private Byte readTimeInMinute;
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "ARTICLE_CATEGORY",
-            joinColumns = @JoinColumn(name = "ARTICLE_ID"),
-            inverseJoinColumns = @JoinColumn(name = "ARTICLE_CATEGORY_ID")
-    )
-    private List<Category> categories;
+    private int readTimeInMinute;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "article")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "ARTICLE_CATEGORY",
+    joinColumns = @JoinColumn(name = "ARTICLE_ID"),
+    inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID"))
+    private Set<Category> categories = new HashSet<>();
+
     @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "article")
     private List<Comment> comments;
 
     public String getTitle() {
@@ -39,7 +52,7 @@ public class Article extends BaseModel {
     }
 
     public void setTitle(String title) {
-        if(GeneralUtil.isNullOrEmpty(title)) return;
+        if(Objects.isNull(title)) return;
         this.title = title;
     }
 
@@ -48,7 +61,7 @@ public class Article extends BaseModel {
     }
 
     public void setDescription(String description) {
-        if(GeneralUtil.isNullOrEmpty(description)) return;
+        if(Objects.isNull(title)) return;
         this.description = description;
     }
 
@@ -57,11 +70,11 @@ public class Article extends BaseModel {
     }
 
     public void setHtmlContent(String htmlContent) {
-        if(GeneralUtil.isNullOrEmpty(htmlContent)) return;
+        if(Objects.isNull(title)) return;
         this.htmlContent = htmlContent;
     }
 
-    public Byte getReadTimeInMinute() {
+    public int getReadTimeInMinute() {
         return readTimeInMinute;
     }
 
@@ -70,11 +83,11 @@ public class Article extends BaseModel {
         this.readTimeInMinute = readTimeInMinute;
     }
 
-    public List<Category> getCategories() {
+    public Set<Category> getCategories() {
         return categories;
     }
 
-    public void setCategories(List<Category> categories) {
+    public void setCategories(Set<Category> categories) {
         if(Objects.isNull(categories)) return;
         this.categories = categories;
     }
@@ -92,6 +105,7 @@ public class Article extends BaseModel {
     }
 
     public void setCoverImageURL(String coverImageURL) {
+        if(Objects.isNull(title)) return;
         this.coverImageURL = coverImageURL;
     }
 }

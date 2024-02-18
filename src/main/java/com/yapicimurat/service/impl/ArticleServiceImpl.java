@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleRepository articleRepository;
 
-    private final int TOTAL_PER_PAGE = 1;
+    private final int TOTAL_PER_PAGE = 5;
 
     public ArticleServiceImpl(CategoryService categoryService,
                               ArticleRepository articleRepository) {
@@ -80,8 +81,7 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         final Article article = new Article();
-        final List<Category> categoryList = categoryService
-                .getByIdList(ConverterUtil.stringListToUUIDList(requestBody.getCategoryIdList()));
+        final Set<Category> categoryList = categoryService.getAllByIdIn(ConverterUtil.stringSetToUUIDSet(requestBody.getCategoryIdList()));
 
         article.setTitle(requestBody.getTitle());
         article.setDescription(requestBody.getDescription());
@@ -94,14 +94,14 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public Article update(String id, ArticleUpdateRequest requestBody) {
-        final Article article = getById(UUID.fromString(id));
-        final boolean isTitleUsedByAnotherArticle = isTitleUsedByAnotherArticleWithId(article.getId(), requestBody.getTitle());
+        Article article = getById(UUID.fromString(id));
+        boolean isTitleUsedByAnotherArticle = isTitleUsedByAnotherArticleWithId(article.getId(), requestBody.getTitle());
 
         if(isTitleUsedByAnotherArticle){
             throw new EntityAlreadyExistsException();
         }
 
-        final List<Category> categories = categoryService.getByIdList(ConverterUtil.stringListToUUIDList(requestBody.getCategories()));
+        Set<Category> categories = categoryService.getAllByIdIn(ConverterUtil.stringSetToUUIDSet(requestBody.getCategories()));
 
         article.setTitle(requestBody.getTitle());
         article.setDescription(requestBody.getDescription());

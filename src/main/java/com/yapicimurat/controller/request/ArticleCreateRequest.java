@@ -5,7 +5,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.util.Set;
 
 public class ArticleCreateRequest {
     @NotBlank
@@ -21,7 +21,7 @@ public class ArticleCreateRequest {
     @Min(value = 1)
     private Byte readTimeInMinute;
     @NotNull
-    private List<String> categoryIdList;
+    private Set<String> categoryIdList;
 
     public String getTitle() {
         return title;
@@ -55,11 +55,11 @@ public class ArticleCreateRequest {
         this.readTimeInMinute = readTimeInMinute;
     }
 
-    public List<String> getCategoryIdList() {
+    public Set<String> getCategoryIdList() {
         return categoryIdList;
     }
 
-    public void setCategoryIdList(List<String> categoryIdList) {
+    public void setCategoryIdList(Set<String> categoryIdList) {
         this.categoryIdList = categoryIdList;
     }
 }

@@ -24,14 +24,6 @@ public class CategoryFacade {
         this.modelMapper = modelMapper;
     }
 
-    public DataResponse<List<CategoryDTO>> getByIdList(final List<String> categoryIdList) {
-        final List<UUID> uuidList = ConverterUtil.stringListToUUIDList(categoryIdList);
-        final List<CategoryDTO> categoryDTOList = GeneralUtil
-                .mapEntityListToDTOList(categoryService.getByIdList(uuidList), CategoryDTO.class, modelMapper);
-
-        return new SuccessDataResponse<>(categoryDTOList, "");
-    }
-
     public DataResponse<List<CategoryDTO>> getAll() {
         final List<CategoryDTO> categoryDTOList = GeneralUtil
                 .mapEntityListToDTOList(categoryService.getAll(), CategoryDTO.class, modelMapper);

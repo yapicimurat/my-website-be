@@ -8,10 +8,8 @@ import com.yapicimurat.model.Category;
 import com.yapicimurat.repository.CategoryRepository;
 import com.yapicimurat.service.CategoryService;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+
+import java.util.*;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -21,11 +19,10 @@ public class CategoryServiceImpl implements CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    @Override
-    public List<Category> getByIdList(final List<UUID> categoryIdList) {
-        List<Category> categoryList = categoryRepository.findAllById(categoryIdList);
 
-        return categoryList;
+    @Override
+    public Set<Category> getAllByIdIn(Set<UUID> categoryIds) {
+        return categoryRepository.findAllByIdIn(categoryIds);
     }
 
     @Override
@@ -44,16 +41,16 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Optional<Category> getByName(String name) {
-        return categoryRepository.getByName(name);
+    public boolean existsByName(String name) {
+        return categoryRepository.existsByName(name);
     }
 
     @Override
     public List<UUID> createAll(List<CategoryCreateRequest> requestBodyList) {
         final List<UUID> createdCategoryIdList = new ArrayList<>();
 
-        requestBodyList.stream().forEach(requestBody -> {
-            if(!getByName(requestBody.getName()).isPresent()) {
+        requestBodyList.forEach(requestBody -> {
+            if(!existsByName(requestBody.getName())) {
                 final Category category = new Category();
 
                 category.setName(requestBody.getName());
@@ -68,7 +65,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public UUID create(CategoryCreateRequest requestBody) throws EntityAlreadyExistsException {
-        if(getByName(requestBody.getName()).isPresent()) {
+        if(existsByName(requestBody.getName())) {
             throw new EntityAlreadyExistsException();
         }
 
@@ -83,7 +80,7 @@ public class CategoryServiceImpl implements CategoryService {
     public UUID updateById(UUID id, CategoryUpdateRequest requestBody) {
         final Category category = getById(id);
 
-        if(getByName(requestBody.getName()).isPresent()) {
+        if(existsByName(requestBody.getName())) {
             throw new EntityAlreadyExistsException();
         }
 

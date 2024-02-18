@@ -10,7 +10,6 @@ import com.yapicimurat.dto.PageableDTO;
 import com.yapicimurat.model.Article;
 import com.yapicimurat.service.ArticleService;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;

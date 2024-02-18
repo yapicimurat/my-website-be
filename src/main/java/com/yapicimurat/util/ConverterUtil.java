@@ -13,6 +13,11 @@ public final class ConverterUtil {
         return stringIdList.stream().map(UUID::fromString).collect(Collectors.toList());
     }
 
+    public static Set<UUID> stringSetToUUIDSet(final Set<String> stringIdList) {
+        if(Objects.isNull(stringIdList)) return Collections.emptySet();
+        return stringIdList.stream().map(UUID::fromString).collect(Collectors.toSet());
+    }
+
     public static List<String> uuidListToStringList(final List<UUID> uuidList) {
         if(Objects.isNull(uuidList)) return Collections.emptyList();
         return uuidList.stream().map(UUID::toString).collect(Collectors.toList());
