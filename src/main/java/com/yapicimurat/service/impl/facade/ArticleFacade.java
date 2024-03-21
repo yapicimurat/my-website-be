@@ -1,11 +1,12 @@
 package com.yapicimurat.service.impl.facade;
 
+import com.yapicimurat.common.mapper.ArticleMapper;
+import com.yapicimurat.common.mapper.PageableMapper;
 import com.yapicimurat.controller.request.ArticleCreateRequest;
 import com.yapicimurat.controller.request.ArticleUpdateRequest;
 import com.yapicimurat.controller.response.DataResponse;
 import com.yapicimurat.controller.response.SuccessDataResponse;
 import com.yapicimurat.dto.ArticleDTO;
-import com.yapicimurat.dto.Pageable;
 import com.yapicimurat.dto.PageableDTO;
 import com.yapicimurat.model.Article;
 import com.yapicimurat.service.ArticleService;
@@ -24,16 +25,15 @@ public class ArticleFacade {
     }
 
     public DataResponse<PageableDTO<ArticleDTO>> getAll(Integer currentPage) {
-        Pageable<Article> allArticlePageable = articleService.getAll(currentPage);
+        final PageableDTO<ArticleDTO> pageableDTO = PageableMapper.INSTANCE.convertPageableToPageableDTO(articleService.getAll(currentPage));
 
-        return new SuccessDataResponse<>(modelMapper.map(allArticlePageable, PageableDTO.class), "");
+        return new SuccessDataResponse<>(pageableDTO, "");
     }
 
     public DataResponse<ArticleDTO> getById(String id) {
         final Article article = articleService.getById(UUID.fromString(id));
-        final ArticleDTO articleDTO = modelMapper.map(article, ArticleDTO.class);
 
-        return new SuccessDataResponse<>(articleDTO, "");
+        return new SuccessDataResponse<>(ArticleMapper.INSTANCE.convertArticleEntityToArticleDTO(article), "");
     }
 
     public DataResponse<String> create(ArticleCreateRequest requestBody) {

@@ -14,10 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,7 +24,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleRepository articleRepository;
 
-    private final int TOTAL_PER_PAGE = 5;
+    private final int TOTAL_PER_PAGE = 4;
 
     public ArticleServiceImpl(CategoryService categoryService,
                               ArticleRepository articleRepository) {
@@ -35,15 +33,15 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public com.yapicimurat.dto.Pageable getAll(Integer currentPage) {
+    public com.yapicimurat.dto.Pageable<Article> getAll(Integer currentPage) {
         currentPage = currentPage != null ? currentPage : 0;
         
-        Pageable x = PageRequest.of(currentPage, TOTAL_PER_PAGE);
+        Pageable x = PageRequest.of(currentPage - 1, TOTAL_PER_PAGE);
         Page<Article> allArticlesPage = articleRepository.findAll(x);
 
         List<Article> articles = allArticlesPage.get().collect(Collectors.toList());
-
-        return new com.yapicimurat.dto.Pageable(
+        
+        return new com.yapicimurat.dto.Pageable<>(
                 articles,
                 allArticlesPage.getTotalPages(),
                 TOTAL_PER_PAGE,

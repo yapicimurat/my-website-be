@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ArticleService {
-    Pageable getAll(Integer currentPage);
+    Pageable<Article> getAll(Integer currentPage);
     Boolean isTitleUsedByAnotherArticle(String title) throws EntityAlreadyExistsException;
     Boolean isTitleUsedByAnotherArticleWithId(UUID id, String title) throws EntityAlreadyExistsException;
     Optional<Article> getByIdOptional(UUID id);
