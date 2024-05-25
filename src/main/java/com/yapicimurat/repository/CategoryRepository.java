@@ -13,4 +13,6 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
     Set<Category> findAllByIdIn(Set<UUID> ids);
     boolean existsByName(String name);
     Set<Category> findAllById(UUID id);
+    long countAllByIdIn(Set<UUID> ids);
+    long countAllByIdInAndNameIn(Set<UUID> ids, Set<String> name);
 }

@@ -36,6 +36,7 @@ public class ArticleServiceImpl implements ArticleService {
     public com.yapicimurat.dto.Pageable<Article> getAll(Integer currentPage) {
         currentPage = currentPage != null ? currentPage : 0;
         
+        
         Pageable x = PageRequest.of(currentPage - 1, TOTAL_PER_PAGE);
         Page<Article> allArticlesPage = articleRepository.findAll(x);
 

@@ -10,6 +10,7 @@ import com.yapicimurat.service.ArticleService;
 import com.yapicimurat.service.CommentService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,6 +31,13 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Optional<Comment> getByIdOptional(UUID id) {
         return commentRepository.findById(id);
+    }
+
+    @Override
+    public List<Comment> getByArticleId(UUID articleId) {
+        Article article = articleService.getById(articleId);
+
+        return commentRepository.getByArticle(article);
     }
 
     @Override

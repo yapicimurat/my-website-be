@@ -1,14 +1,18 @@
 package com.yapicimurat.service.impl.facade;
 
+import com.yapicimurat.common.mapper.CommentMapper;
 import com.yapicimurat.controller.request.CommentCreateRequest;
 import com.yapicimurat.controller.request.CommentUpdateRequest;
 import com.yapicimurat.controller.response.DataResponse;
 import com.yapicimurat.controller.response.SuccessDataResponse;
 import com.yapicimurat.dto.CommentDTO;
 import com.yapicimurat.service.CommentService;
+import com.yapicimurat.util.ConverterUtil;
+import com.yapicimurat.util.GeneralUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -25,6 +29,13 @@ public class CommentFacade {
         final CommentDTO commentDTO = modelMapper.map(commentService.getById(UUID.fromString(id)), CommentDTO.class);
 
         return new SuccessDataResponse<>(commentDTO, "");
+    }
+
+    public DataResponse<List<CommentDTO>> getByArticleId(String articleId) {
+        final List<CommentDTO> commentDTOList = CommentMapper.INSTANCE
+                .convertCommentListToCommentDTOList(commentService.getByArticleId(UUID.fromString(articleId)));
+
+        return new SuccessDataResponse<>(commentDTOList, "");
     }
 
     public DataResponse<CommentDTO> makeComment(String articleId, CommentCreateRequest requestBody) {

@@ -8,6 +8,8 @@ import com.yapicimurat.service.impl.facade.CommentFacade;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/comment")
 public class CommentController {
@@ -20,6 +22,11 @@ public class CommentController {
     @GetMapping("/{id}")
     public ResponseEntity<DataResponse<CommentDTO>> getById(@PathVariable("id") String id) {
         return ResponseEntity.ok(commentFacade.getById(id));
+    }
+
+    @GetMapping("/article/{articleId}/comment")
+    public ResponseEntity<DataResponse<List<CommentDTO>>> getByArticleId(@PathVariable("articleId") String articleId) {
+        return ResponseEntity.ok(commentFacade.getByArticleId(articleId));
     }
 
     @PostMapping("/{articleId}")
