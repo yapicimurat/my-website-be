@@ -41,11 +41,11 @@ public class CommentDTO {
         this.text = text;
     }
 
-    public Boolean getAnswer() {
+    public Boolean getIsAnswer() {
         return isAnswer;
     }
 
-    public void setAnswer(Boolean answer) {
+    public void setIsAnswer(Boolean answer) {
         isAnswer = answer;
     }
 

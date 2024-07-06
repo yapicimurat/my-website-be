@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/comment")
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 public class CommentController {
     private final CommentFacade commentFacade;
 
