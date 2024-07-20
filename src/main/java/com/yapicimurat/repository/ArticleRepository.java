@@ -13,12 +13,12 @@ public interface ArticleRepository extends PagingAndSortingRepository<Article, U
             "   WHEN COUNT(article.title) = 1 THEN TRUE" +
             "   ELSE FALSE " +
             "END FROM Article as article WHERE article.title = LOWER(:title)")
-    boolean isTitleUsedByAnother(String title);
+    boolean checkIsTitleAlreadyExists(String title);
 
     @Query("SELECT " +
             "CASE " +
             "   WHEN COUNT(article.title) = 1 THEN TRUE" +
             "   ELSE FALSE " +
             "END FROM Article as article WHERE article.id != :id AND article.title = LOWER(:title)")
-    boolean isTitleUsedByAnotherWithId(UUID id, String title);
+    boolean checkIsTitleAlreadyExistsByExceptId(UUID id, String title);
 }

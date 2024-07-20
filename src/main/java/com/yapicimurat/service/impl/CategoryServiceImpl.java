@@ -1,15 +1,17 @@
 package com.yapicimurat.service.impl;
 
-import com.yapicimurat.controller.request.CategoryCreateRequest;
-import com.yapicimurat.controller.request.CategoryUpdateRequest;
+import com.yapicimurat.common.mapper.CategoryMapper;
+import com.yapicimurat.dto.category.CategoryDTO;
+import com.yapicimurat.dto.category.CategoryInputDTO;
 import com.yapicimurat.exception.EntityAlreadyExistsException;
 import com.yapicimurat.exception.EntityNotFoundException;
 import com.yapicimurat.model.Category;
 import com.yapicimurat.repository.CategoryRepository;
 import com.yapicimurat.service.CategoryService;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -19,75 +21,83 @@ public class CategoryServiceImpl implements CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-
     @Override
-    public Set<Category> getAllByIdIn(Set<UUID> categoryIds) {
-        return categoryRepository.findAllByIdIn(categoryIds);
+    public List<CategoryDTO> getAllByIdIn(Set<UUID> categoryIds) {
+        return CategoryMapper.INSTANCE
+                .convertCategoryEntityListToCategoryDTOList(categoryRepository.findAllByIdIn(categoryIds));
     }
 
     @Override
-    public List<Category> getAll() {
-        return categoryRepository.findAll();
+    public List<CategoryDTO> getAll() {
+        return CategoryMapper.INSTANCE
+                .convertCategoryEntityListToCategoryDTOList(categoryRepository.findAll());
     }
 
     @Override
-    public Category getById(UUID id) throws EntityNotFoundException {
+    public CategoryDTO getById(UUID id) throws EntityNotFoundException {
         return categoryRepository.findById(id)
+                .map(CategoryMapper.INSTANCE::convertCategoryEntityToCategoryDTO)
                 .orElseThrow(EntityNotFoundException::new);
     }
+
     @Override
-    public Optional<Category> getByIdOptional(UUID id) {
-        return categoryRepository.findById(id);
+    public Optional<CategoryDTO> getOptionalCategoryDTOById(UUID id) {
+        return categoryRepository.findById(id)
+                .map(CategoryMapper.INSTANCE::convertCategoryEntityToCategoryDTO);
     }
 
     @Override
-    public boolean existsByName(String name) {
+    public boolean existsByName(final String name) {
         return categoryRepository.existsByName(name);
     }
 
     @Override
-    public List<UUID> createAll(List<CategoryCreateRequest> requestBodyList) {
-        final List<UUID> createdCategoryIdList = new ArrayList<>();
+    public List<CategoryDTO> createAll(final Set<CategoryInputDTO> categoryInputDTOSet) {
+        checkAtLeastOneNameExists(categoryInputDTOSet.stream().map(CategoryInputDTO::name).collect(Collectors.toUnmodifiableSet()));
+        List<Category> categoryEntityList = CategoryMapper.INSTANCE
+                .convertCategoryInputDTOSetToCategoryEntityList(categoryInputDTOSet);
+        return CategoryMapper.INSTANCE
+                .convertCategoryEntityListToCategoryDTOList(categoryRepository.saveAll(categoryEntityList));
+    }
 
-        requestBodyList.forEach(requestBody -> {
-            if(!existsByName(requestBody.getName())) {
-                final Category category = new Category();
+    @Override
+    public CategoryDTO create(final CategoryInputDTO categoryInputDTO) throws EntityAlreadyExistsException {
+        return saveCategory(null, categoryInputDTO);
+    }
 
-                category.setName(requestBody.getName());
-                category.setColor(requestBody.getColor());
+    @Override
+    public CategoryDTO updateById(UUID id, CategoryInputDTO categoryInputDTO) {
+        return saveCategory(id, categoryInputDTO);
+    }
 
-                createdCategoryIdList.add(categoryRepository.save(category).id);
+    private CategoryDTO saveCategory(@Nullable UUID id, CategoryInputDTO categoryInputDTO) {
+        performPreChecksToSaveCategory(id, categoryInputDTO);
+        final Category categoryToSave = CategoryMapper.INSTANCE.
+                convertCategoryInputDTOToCategoryEntity(categoryInputDTO);
+        if(Objects.nonNull(id)) {
+            categoryToSave.setId(id);
+        }
+
+        return CategoryMapper.INSTANCE
+                .convertCategoryEntityToCategoryDTO(categoryRepository.save(categoryToSave));
+    }
+
+    private void checkAtLeastOneNameExists(Set<String> nameSet) {
+        if(categoryRepository.countByNameIn(nameSet) > 0) {
+            throw new EntityAlreadyExistsException();
+        }
+    }
+
+    private void performPreChecksToSaveCategory(@Nullable UUID id, CategoryInputDTO categoryInputDTO) {
+        if(Objects.nonNull(id)) {
+            if(categoryRepository.existsByIdNotAndName(id, categoryInputDTO.name())) {
+                throw new EntityAlreadyExistsException();
             }
-        });
-
-        return createdCategoryIdList;
-    }
-
-    @Override
-    public UUID create(CategoryCreateRequest requestBody) throws EntityAlreadyExistsException {
-        if(existsByName(requestBody.getName())) {
-            throw new EntityAlreadyExistsException();
         }
 
-        final Category category = new Category();
-        category.setName(requestBody.getName());
-        category.setColor(requestBody.getColor());
-
-        return categoryRepository.save(category).id;
-    }
-
-    @Override
-    public UUID updateById(UUID id, CategoryUpdateRequest requestBody) {
-        final Category category = getById(id);
-
-        if(existsByName(requestBody.getName())) {
+        if(categoryRepository.existsByName(categoryInputDTO.name())) {
             throw new EntityAlreadyExistsException();
         }
-
-        category.setName(requestBody.getName());
-        category.setColor(requestBody.getColor());
-
-        return categoryRepository.save(category).id;
     }
 
 }

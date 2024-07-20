@@ -1,6 +1,5 @@
 package com.yapicimurat.model;
 
-import com.yapicimurat.model.abs.BaseModel;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;

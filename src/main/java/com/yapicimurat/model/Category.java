@@ -1,6 +1,5 @@
 package com.yapicimurat.model;
 
-import com.yapicimurat.model.abs.BaseModel;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -10,7 +9,7 @@ import java.util.Objects;
 @Table(name = "CATEGORY")
 public class Category extends BaseModel {
     @NotBlank
-    @Size(max = 100)
+    @Size(min = 3, max = 100)
     @Column(name = "NAME", length = 100, nullable = false)
     private String name;
 

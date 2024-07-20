@@ -1,7 +1,11 @@
 package com.yapicimurat.service.impl;
 
-import com.yapicimurat.controller.request.ArticleCreateRequest;
-import com.yapicimurat.controller.request.ArticleUpdateRequest;
+import com.yapicimurat.common.mapper.ArticleMapper;
+import com.yapicimurat.common.mapper.CategoryMapper;
+import com.yapicimurat.common.mapper.PageableMapper;
+import com.yapicimurat.dto.article.ArticleDTO;
+import com.yapicimurat.dto.article.ArticleInputDTO;
+import com.yapicimurat.dto.pageable.PageableDTO;
 import com.yapicimurat.exception.EntityAlreadyExistsException;
 import com.yapicimurat.exception.EntityNotFoundException;
 import com.yapicimurat.model.Article;
@@ -9,14 +13,12 @@ import com.yapicimurat.model.Category;
 import com.yapicimurat.repository.ArticleRepository;
 import com.yapicimurat.service.ArticleService;
 import com.yapicimurat.service.CategoryService;
-import com.yapicimurat.util.ConverterUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ArticleServiceImpl implements ArticleService {
@@ -33,17 +35,17 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public com.yapicimurat.dto.Pageable<Article> getAll(Integer currentPage) {
-        currentPage = currentPage != null ? currentPage : 0;
-        
-        
-        Pageable x = PageRequest.of(currentPage - 1, TOTAL_PER_PAGE);
-        Page<Article> allArticlesPage = articleRepository.findAll(x);
+    public PageableDTO<ArticleDTO> getAll(Integer currentPage) {
+        currentPage = !Objects.isNull(currentPage) ? currentPage : 0;
 
-        List<Article> articles = allArticlesPage.get().collect(Collectors.toList());
-        
-        return new com.yapicimurat.dto.Pageable<>(
-                articles,
+        Pageable page = PageRequest.of(currentPage - 1, TOTAL_PER_PAGE);
+        Page<Article> allArticlesPage = articleRepository.findAll(page);
+
+        List<ArticleDTO> articleDTOList = ArticleMapper.INSTANCE
+                .convertArticleEntityListToArticleDTOList(allArticlesPage.stream().toList());
+
+        return new PageableDTO<>(
+                articleDTOList,
                 allArticlesPage.getTotalPages(),
                 TOTAL_PER_PAGE,
                 currentPage,
@@ -53,61 +55,57 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Boolean isTitleUsedByAnotherArticle(String title) {
-        return articleRepository.isTitleUsedByAnother(title);
+    public Optional<ArticleDTO> getOptionalArticleDTOById(UUID id) {
+        return articleRepository.findById(id).map(ArticleMapper.INSTANCE::convertArticleEntityToArticleDTO);
     }
 
     @Override
-    public Boolean isTitleUsedByAnotherArticleWithId(UUID id, String title) throws EntityAlreadyExistsException {
-        return articleRepository.isTitleUsedByAnotherWithId(id, title);
+    public ArticleDTO getById(UUID id) {
+        return articleRepository.findById(id).map(ArticleMapper.INSTANCE::convertArticleEntityToArticleDTO)
+                .orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
-    public Optional<Article> getByIdOptional(UUID id) {
-        return articleRepository.findById(id);
+    public ArticleDTO create(ArticleInputDTO articleInputDTO) {
+        return saveCategory(null, articleInputDTO);
     }
 
     @Override
-    public Article getById(UUID id) {
-        return articleRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    public ArticleDTO update(String id, ArticleInputDTO articleInput) {
+        return saveCategory(UUID.fromString(id), articleInput);
     }
 
-    @Override
-    public String create(final ArticleCreateRequest requestBody) {
-        final boolean isTitleUsedByAnotherArticle = isTitleUsedByAnotherArticle(requestBody.getTitle());
-        if(isTitleUsedByAnotherArticle){
+    private ArticleDTO saveCategory(@Nullable final UUID id, ArticleInputDTO articleInputDTO) {
+        performPreChecksToSaveArticle(id, articleInputDTO);
+        Set<Category> categorySet = new HashSet<>(CategoryMapper.INSTANCE
+                .convertCategoryDTOListToCategoryEntityList(categoryService.getAllByIdIn(articleInputDTO.categoryIdSet())));
+        Article articleToSave = ArticleMapper.INSTANCE
+                .convertArticleInputDTOToArticleEntity(articleInputDTO, categorySet);
+        articleToSave.setId(id);
+
+        return ArticleMapper.INSTANCE.convertArticleEntityToArticleDTO(articleRepository.save(articleToSave));
+    }
+
+    private void performPreChecksToSaveArticle(@Nullable final UUID id, final ArticleInputDTO articleInputDTO) {
+        if(Objects.nonNull(id)) {
+            if(!articleRepository.existsById(id)) {
+                throw new EntityNotFoundException();
+            }
+            checkIsTitleAlreadyExistsByExceptId(id, articleInputDTO.title());
+        }else {
+            checkIsTitleAlreadyExists(articleInputDTO.title());
+        }
+    }
+
+    public void checkIsTitleAlreadyExists(String title) {
+        if(articleRepository.checkIsTitleAlreadyExists(title)) {
             throw new EntityAlreadyExistsException();
         }
-
-        final Article article = new Article();
-        final Set<Category> categoryList = categoryService.getAllByIdIn(ConverterUtil.stringSetToUUIDSet(requestBody.getCategoryIdList()));
-
-        article.setTitle(requestBody.getTitle());
-        article.setDescription(requestBody.getDescription());
-        article.setHtmlContent(requestBody.getHtmlContent());
-        article.setReadTimeInMinute(requestBody.getReadTimeInMinute());
-        article.setCategories(categoryList);
-
-        return articleRepository.save(article).id.toString();
     }
 
-    @Override
-    public Article update(String id, ArticleUpdateRequest requestBody) {
-        Article article = getById(UUID.fromString(id));
-        boolean isTitleUsedByAnotherArticle = isTitleUsedByAnotherArticleWithId(article.getId(), requestBody.getTitle());
-
-        if(isTitleUsedByAnotherArticle){
+    public void checkIsTitleAlreadyExistsByExceptId(UUID id, String title) throws EntityAlreadyExistsException {
+        if(articleRepository.checkIsTitleAlreadyExistsByExceptId(id, title)) {
             throw new EntityAlreadyExistsException();
         }
-
-        Set<Category> categories = categoryService.getAllByIdIn(ConverterUtil.stringSetToUUIDSet(requestBody.getCategories()));
-
-        article.setTitle(requestBody.getTitle());
-        article.setDescription(requestBody.getDescription());
-        article.setHtmlContent(requestBody.getHtmlContent());
-        article.setReadTimeInMinute(requestBody.getReadTimeInMinute());
-        article.setCategories(categories);
-
-        return articleRepository.save(article);
     }
 }

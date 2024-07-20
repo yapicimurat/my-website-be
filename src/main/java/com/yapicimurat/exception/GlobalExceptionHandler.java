@@ -1,9 +1,9 @@
 package com.yapicimurat.exception;
 
 import com.yapicimurat.constant.ExceptionConstant;
-import com.yapicimurat.controller.response.ErrorDataResponse;
-import com.yapicimurat.controller.response.ErrorResponse;
-import com.yapicimurat.controller.response.Response;
+import com.yapicimurat.web.controller.response.ErrorDataResponse;
+import com.yapicimurat.web.controller.response.ErrorResponse;
+import com.yapicimurat.web.controller.response.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;

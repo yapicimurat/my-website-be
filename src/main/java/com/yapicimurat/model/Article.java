@@ -1,7 +1,7 @@
 package com.yapicimurat.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.yapicimurat.model.abs.BaseModel;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

@@ -1,7 +1,8 @@
 package com.yapicimurat.service.impl;
 
-import com.yapicimurat.controller.request.CommentCreateRequest;
-import com.yapicimurat.controller.request.CommentUpdateRequest;
+import com.yapicimurat.dto.article.ArticleDTO;
+import com.yapicimurat.web.input.CommentCreateRequest;
+import com.yapicimurat.web.input.CommentUpdateRequest;
 import com.yapicimurat.exception.EntityNotFoundException;
 import com.yapicimurat.model.Article;
 import com.yapicimurat.model.Comment;
@@ -9,7 +10,6 @@ import com.yapicimurat.repository.CommentRepository;
 import com.yapicimurat.service.ArticleService;
 import com.yapicimurat.service.CommentService;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,10 +34,10 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<Comment> getByArticleId(UUID articleId) {
-        Article article = articleService.getById(articleId);
+    public List<Comment> getAllByArticle(UUID articleId) {
+        ArticleDTO article = articleService.getById(articleId);
 
-        return commentRepository.getByArticle(article);
+        return commentRepository.getAllByArticleOrderByCreatedAtDesc(article);
     }
 
     @Override
@@ -57,8 +57,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment answerToComment(UUID commentId, CommentCreateRequest commentCreateRequest) {
-        final Comment parentComment = getById(commentId);
+    public Comment answerToComment(UUID parentCommentId, CommentCreateRequest commentCreateRequest) {
+        final Comment parentComment = getById(parentCommentId);
         final Comment answer = new Comment();
 
         answer.setName(commentCreateRequest.getName());

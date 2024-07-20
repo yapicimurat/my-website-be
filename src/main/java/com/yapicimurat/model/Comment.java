@@ -1,13 +1,11 @@
 package com.yapicimurat.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.yapicimurat.model.abs.BaseModel;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "COMMENT")
@@ -43,7 +41,7 @@ public class Comment extends BaseModel {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentComment")
     private List<Comment> answers;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Comment parentComment;
 
     public String getName() {
@@ -51,7 +49,6 @@ public class Comment extends BaseModel {
     }
 
     public void setName(String name) {
-        if(Objects.isNull(name)) return;
         this.name = name;
     }
 
@@ -60,7 +57,6 @@ public class Comment extends BaseModel {
     }
 
     public void setLastName(String lastName) {
-        if(Objects.isNull(name)) return;
         this.lastName = lastName;
     }
 
@@ -69,7 +65,6 @@ public class Comment extends BaseModel {
     }
 
     public void setEmail(String email) {
-        if(Objects.isNull(name)) return;
         this.email = email;
     }
 
@@ -78,11 +73,10 @@ public class Comment extends BaseModel {
     }
 
     public void setText(String text) {
-        if(Objects.isNull(name)) return;
         this.text = text;
     }
 
-    public boolean getIsAnswer() {
+    public boolean isAnswer() {
         return isAnswer;
     }
 
@@ -102,13 +96,14 @@ public class Comment extends BaseModel {
         return answers;
     }
 
-    public void setAnswers(List<Comment> comments) {
-        this.answers = comments;
+    public void setAnswers(List<Comment> answers) {
+        this.answers = answers;
     }
 
     public Comment getParentComment() {
         return parentComment;
     }
+
     public void setParentComment(Comment parentComment) {
         this.parentComment = parentComment;
     }
