@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +41,17 @@ public class GlobalExceptionHandler {
         final Map<String, String> invalidFieldList = new HashMap<>();
 
         errorList.forEach(error -> invalidFieldList.put(((FieldError)error).getField(), error.getDefaultMessage()));
+
+        return new ErrorDataResponse<>(invalidFieldList,"");
+    }
+
+    @ExceptionHandler(value = {ConstraintViolationException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorDataResponse<Map<String, String>> handleConstraintViolationException(ConstraintViolationException exception) {
+        final List<ConstraintViolation<?>> errorList =  exception.getConstraintViolations().stream().toList();
+        final Map<String, String> invalidFieldList = new HashMap<>();
+
+        errorList.forEach(error -> invalidFieldList.put(error.getPropertyPath().toString(), error.getMessage()));
 
         return new ErrorDataResponse<>(invalidFieldList,"");
     }

@@ -1,8 +1,9 @@
 package com.yapicimurat.service.impl;
 
-import com.yapicimurat.dto.article.ArticleDTO;
-import com.yapicimurat.web.input.CommentCreateRequest;
-import com.yapicimurat.web.input.CommentUpdateRequest;
+import com.yapicimurat.common.mapper.ArticleMapper;
+import com.yapicimurat.common.mapper.CommentMapper;
+import com.yapicimurat.dto.comment.CommentDTO;
+import com.yapicimurat.dto.comment.CommentInputDTO;
 import com.yapicimurat.exception.EntityNotFoundException;
 import com.yapicimurat.model.Article;
 import com.yapicimurat.model.Comment;
@@ -18,87 +19,88 @@ import java.util.UUID;
 public class CommentServiceImpl implements CommentService {
     private final ArticleService articleService;
     private final CommentRepository commentRepository;
-    public CommentServiceImpl(CommentRepository commentRepository, ArticleService articleService){
-
+    public CommentServiceImpl(CommentRepository commentRepository, ArticleService articleService) {
         this.commentRepository = commentRepository;
         this.articleService = articleService;
     }
 
-    public Comment getById(UUID id) throws EntityNotFoundException {
+    public CommentDTO getById(UUID id) throws EntityNotFoundException {
+        return CommentMapper.INSTANCE.convertCommentEntityToCommentDTO(findById(id));
+    }
+
+    @Override
+    public Optional<CommentDTO> getByIdOptional(UUID id) {
+        return commentRepository.findById(id)
+                .map(CommentMapper.INSTANCE::convertCommentEntityToCommentDTO);
+    }
+
+    @Override
+    public List<CommentDTO> getAllByArticle(UUID articleId) {
+        return CommentMapper.INSTANCE
+                .convertCommentEntityListToCommentDTOList(
+                        commentRepository.getAllByArticleOrderByCreatedAtDesc(articleId)
+                );
+    }
+
+    @Override
+    public List<CommentDTO> getCommentAnswers(UUID parentCommentId) {
+        return CommentMapper.INSTANCE
+                .convertCommentEntityListToCommentDTOList(
+                        commentRepository.getCommentAnswersByParentCommentIdOrderByCreatedAtDesc(parentCommentId)
+                );
+    }
+
+    @Override
+    public CommentDTO makeComment(UUID articleId, CommentInputDTO commentInputDTO) {
+        final Article article = ArticleMapper.INSTANCE.convertArticleDTOToArticleEntity(articleService.getById(articleId));
+        final Comment comment = CommentMapper.INSTANCE.convertCommentInputDTOToCommentEntity(commentInputDTO);
+        comment.setVisible(false);
+        comment.setArticle(article);
+
+        return CommentMapper.INSTANCE.convertCommentEntityToCommentDTO(commentRepository.save(comment));
+    }
+
+    @Override
+    public String answerToComment(UUID parentCommentId, CommentInputDTO commentInputDTO) {
+        final Comment parentComment = findById(parentCommentId);
+        final Comment answerComment = CommentMapper.INSTANCE.convertCommentInputDTOToCommentEntity(commentInputDTO);
+
+        answerComment.setAnswer(true);
+        answerComment.setParentComment(parentComment);
+        answerComment.setArticle(parentComment.getArticle());
+        answerComment.setVisible(false);
+
+        return commentRepository.save(answerComment).id.toString();
+    }
+
+    @Override
+    public CommentDTO publishCommentById(UUID id) {
+        final Comment comment = findById(id);
+        comment.setVisible(true);
+        return CommentMapper.INSTANCE.convertCommentEntityToCommentDTO(commentRepository.save(comment));
+    }
+
+    @Override
+    public CommentDTO banCommentById(UUID id) {
+        final Comment comment = findById(id);
+        comment.setVisible(false);
+        return CommentMapper.INSTANCE.convertCommentEntityToCommentDTO(commentRepository.save(comment));
+    }
+
+    @Override
+    public CommentDTO updateById(UUID id, CommentInputDTO commentInputDTO) {
+        checkCommentIsExistById(id);
+        final Comment commentToSave = CommentMapper.INSTANCE.convertCommentInputDTOToCommentEntity(commentInputDTO);
+        return CommentMapper.INSTANCE.convertCommentEntityToCommentDTO(commentRepository.save(commentToSave));
+    }
+
+    private Comment findById(UUID id) {
         return commentRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
-    @Override
-    public Optional<Comment> getByIdOptional(UUID id) {
-        return commentRepository.findById(id);
-    }
-
-    @Override
-    public List<Comment> getAllByArticle(UUID articleId) {
-        ArticleDTO article = articleService.getById(articleId);
-
-        return commentRepository.getAllByArticleOrderByCreatedAtDesc(article);
-    }
-
-    @Override
-    public Comment makeComment(UUID articleId, CommentCreateRequest requestBody) {
-        final Article article = articleService.getById(articleId);
-        final Comment comment = new Comment();
-
-        comment.setName(requestBody.getName());
-        comment.setLastName(requestBody.getLastName());
-        comment.setEmail(requestBody.getEmail());
-        comment.setText(requestBody.getText());
-        comment.setIsAnswer(false);
-        comment.setArticle(article);
-        comment.setVisible(false);
-
-        return commentRepository.save(comment);
-    }
-
-    @Override
-    public Comment answerToComment(UUID parentCommentId, CommentCreateRequest commentCreateRequest) {
-        final Comment parentComment = getById(parentCommentId);
-        final Comment answer = new Comment();
-
-        answer.setName(commentCreateRequest.getName());
-        answer.setLastName(commentCreateRequest.getLastName());
-        answer.setEmail(commentCreateRequest.getEmail());
-        answer.setText(commentCreateRequest.getText());
-        answer.setIsAnswer(true);
-        answer.setParentComment(parentComment);
-        answer.setArticle(parentComment.getArticle());
-
-        return commentRepository.save(answer);
-    }
-
-    @Override
-    public UUID publishCommentById(UUID id) {
-        final Comment comment = getById(id);
-
-        comment.setVisible(true);
-
-        return commentRepository.save(comment).id;
-    }
-
-    @Override
-    public UUID banCommentById(UUID id) {
-        final Comment comment = getById(id);
-
-        comment.setVisible(false);
-
-        return commentRepository.save(comment).id;
-    }
-
-    @Override
-    public Comment updateById(UUID id, CommentUpdateRequest requestBody) {
-        final Comment comment = getById(id);
-
-        comment.setName(requestBody.getName());
-        comment.setLastName(requestBody.getLastName());
-        comment.setEmail(requestBody.getEmail());
-        comment.setText(requestBody.getText());
-
-        return commentRepository.save(comment);
+    private void checkCommentIsExistById(UUID id) {
+        if(!commentRepository.existsById(id)) {
+            throw new EntityNotFoundException();
+        }
     }
 }

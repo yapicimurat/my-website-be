@@ -1,9 +1,8 @@
 package com.yapicimurat.web.output.article;
 
-import com.yapicimurat.dto.CommentDTO;
 import com.yapicimurat.dto.category.CategoryDTO;
 
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 public record ArticleOutput(
@@ -14,6 +13,7 @@ public record ArticleOutput(
         String coverImageURL,
         Byte readTimeInMinute,
         Set<CategoryDTO> categories,
-        List<CommentDTO> comments
+        int amountOfAnswers,
+        LocalDateTime createdAt
 ) {
 }

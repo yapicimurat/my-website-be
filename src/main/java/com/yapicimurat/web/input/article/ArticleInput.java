@@ -10,7 +10,4 @@ public record ArticleInput(
         Byte readTimeInMinute,
         Set<String> categoryIdList
 ) {
-
-
-
 }

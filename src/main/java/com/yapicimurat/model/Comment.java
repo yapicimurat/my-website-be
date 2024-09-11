@@ -1,7 +1,8 @@
 package com.yapicimurat.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -38,12 +39,16 @@ public class Comment extends BaseModel {
     private Article article;
 
     @JsonBackReference
+    @LazyToOne(LazyToOneOption.NO_PROXY)
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentComment")
     private List<Comment> answers;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Comment parentComment;
 
+    public List<Comment> getNoProxyAnswers() {
+        return this.answers;
+    }
     public String getName() {
         return name;
     }
@@ -76,11 +81,11 @@ public class Comment extends BaseModel {
         this.text = text;
     }
 
-    public boolean isAnswer() {
+    public boolean getAnswer() {
         return isAnswer;
     }
 
-    public void setIsAnswer(boolean answer) {
+    public void setAnswer(boolean answer) {
         isAnswer = answer;
     }
 

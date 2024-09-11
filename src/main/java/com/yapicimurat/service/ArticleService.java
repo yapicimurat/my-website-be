@@ -13,4 +13,5 @@ public interface ArticleService {
     ArticleDTO getById(UUID id);
     ArticleDTO create(ArticleInputDTO articleInput);
     ArticleDTO update(String id, ArticleInputDTO article);
+    boolean existsById(UUID id);
 }

@@ -36,10 +36,10 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public PageableDTO<ArticleDTO> getAll(Integer currentPage) {
-        currentPage = !Objects.isNull(currentPage) ? currentPage : 0;
+        currentPage = !Objects.isNull(currentPage) ? currentPage : 1;
 
         Pageable page = PageRequest.of(currentPage - 1, TOTAL_PER_PAGE);
-        Page<Article> allArticlesPage = articleRepository.findAll(page);
+        Page<Article> allArticlesPage = articleRepository.getAllArticles(page);
 
         List<ArticleDTO> articleDTOList = ArticleMapper.INSTANCE
                 .convertArticleEntityListToArticleDTOList(allArticlesPage.stream().toList());
@@ -73,6 +73,11 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public ArticleDTO update(String id, ArticleInputDTO articleInput) {
         return saveCategory(UUID.fromString(id), articleInput);
+    }
+
+    @Override
+    public boolean existsById(UUID id) {
+        return articleRepository.existsById(id);
     }
 
     private ArticleDTO saveCategory(@Nullable final UUID id, ArticleInputDTO articleInputDTO) {

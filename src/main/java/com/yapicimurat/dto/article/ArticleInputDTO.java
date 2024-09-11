@@ -1,6 +1,6 @@
 package com.yapicimurat.dto.article;
 
-import com.yapicimurat.dto.CommentDTO;
+import com.yapicimurat.dto.comment.CommentDTO;
 
 import java.util.List;
 import java.util.Set;

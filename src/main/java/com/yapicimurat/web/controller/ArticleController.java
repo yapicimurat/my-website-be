@@ -1,26 +1,24 @@
 package com.yapicimurat.web.controller;
 
 import com.yapicimurat.common.mapper.ArticleMapper;
-import com.yapicimurat.common.mapper.PageableMapper;
 import com.yapicimurat.dto.article.ArticleInputDTO;
-import com.yapicimurat.dto.pageable.PageableDTO;
 import com.yapicimurat.service.ArticleService;
 import com.yapicimurat.web.controller.response.SuccessDataResponse;
 import com.yapicimurat.web.input.article.ArticleInput;
 import com.yapicimurat.web.controller.response.DataResponse;
-import com.yapicimurat.dto.article.ArticleDTO;
 import com.yapicimurat.web.output.article.ArticleOutput;
 import com.yapicimurat.web.output.pageable.PageableOutput;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
-import java.util.List;
+import javax.validation.constraints.Positive;
 import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 @RequestMapping(path = "/api/article")
+@Validated
 public class ArticleController {
     private final ArticleService articleService;
 
@@ -29,24 +27,17 @@ public class ArticleController {
     }
 
     @GetMapping
-    public ResponseEntity<DataResponse<PageableOutput<ArticleOutput>>> getAll(@RequestParam(value = "page", required = false) Integer currentPage) {
-        PageableDTO<ArticleDTO> pageableDTO = articleService.getAll(currentPage);
-        List<ArticleOutput> articleOutput = ArticleMapper.INSTANCE.convertArticleDTOListToArticleOutputList((List<ArticleDTO>) pageableDTO.elements());
-        PageableOutput<ArticleOutput> pageableOutput = new PageableOutput<>(
-                articleOutput,
-                //TODO: en son burada kaldin
-                //TODO: PageableDTO -> PagaeblaOutput donusturme yapamadin!!!
-        )
+    public ResponseEntity<DataResponse<PageableOutput<ArticleOutput>>> getAll(@Positive @RequestParam(value = "page", required = false) Integer currentPage) {
         return ResponseEntity.ok(
-                SuccessDataResponse.<PageableOutput<ArticleOutput>>createSuccessDataResponse(
-                        ,
+                SuccessDataResponse.createSuccessDataResponse(
+                        new PageableOutput<>(articleService.getAll(currentPage)),
                         ""
                 )
         );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DataResponse<ArticleOutput>> getById(@Valid @PathVariable("id") String id) {
+    public ResponseEntity<DataResponse<ArticleOutput>> getById(@PathVariable("id") String id) {
         return ResponseEntity.ok(
                 SuccessDataResponse.createSuccessDataResponse(
                         ArticleMapper.INSTANCE.convertArticleDTOToArticleOutput(articleService.getById(UUID.fromString(id)))

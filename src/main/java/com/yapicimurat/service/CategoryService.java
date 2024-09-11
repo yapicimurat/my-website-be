@@ -2,8 +2,6 @@ package com.yapicimurat.service;
 
 import com.yapicimurat.dto.category.CategoryDTO;
 import com.yapicimurat.dto.category.CategoryInputDTO;
-import com.yapicimurat.web.input.CategoryCreateRequest;
-import com.yapicimurat.web.input.CategoryUpdateRequest;
 import com.yapicimurat.exception.EntityAlreadyExistsException;
 import com.yapicimurat.exception.EntityNotFoundException;
 

@@ -1,21 +1,22 @@
 package com.yapicimurat.service;
 
-import com.yapicimurat.web.input.CommentCreateRequest;
-import com.yapicimurat.web.input.CommentUpdateRequest;
+import com.yapicimurat.dto.comment.CommentDTO;
+import com.yapicimurat.dto.comment.CommentInputDTO;
+import com.yapicimurat.dto.comment.ParentCommentDTO;
 import com.yapicimurat.exception.EntityNotFoundException;
-import com.yapicimurat.model.Comment;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface CommentService {
-    Comment getById(UUID id) throws EntityNotFoundException;
-    Optional<Comment> getByIdOptional(UUID id);
-    List<Comment> getAllByArticle(UUID articleId);
-    Comment makeComment(UUID articleId, CommentCreateRequest requestBody);
-    Comment answerToComment(UUID commentId, CommentCreateRequest commentCreateRequest);
-    UUID publishCommentById(UUID id);
-    UUID banCommentById(UUID id);
-    Comment updateById(UUID id, CommentUpdateRequest requestBody);
+    CommentDTO getById(UUID id) throws EntityNotFoundException;
+    Optional<CommentDTO> getByIdOptional(UUID id);
+    List<CommentDTO> getAllByArticle(UUID articleId);
+    List<CommentDTO> getCommentAnswers(UUID parentCommentId);
+    CommentDTO makeComment(UUID articleId, CommentInputDTO commentInputDTO);
+    String answerToComment(UUID id, CommentInputDTO commentInputDTO);
+    CommentDTO publishCommentById(UUID id);
+    CommentDTO banCommentById(UUID id);
+    CommentDTO updateById(UUID id, CommentInputDTO commentInputDTO);
 }

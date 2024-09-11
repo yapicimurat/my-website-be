@@ -95,6 +95,11 @@ public class Article extends BaseModel {
         return comments;
     }
 
+    public int getAmountOfAnswers() {
+        if(Objects.isNull(comments)) return 0;
+        return comments.size();
+    }
+
     public void setComments(List<Comment> comments) {
         if(Objects.isNull(comments)) return;
         this.comments = comments;

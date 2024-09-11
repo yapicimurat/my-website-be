@@ -18,12 +18,12 @@
   </build>
   <version>1.0-SNAPSHOT</version>
   <name>mywebsite</name>
-  <url>http://maven.apache.org</url>
+  <url>https://maven.apache.org</url>
   <properties>
-    <java.version>22</java.version>
+    <java.version>17</java.version>
     <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
-    <maven.compiler.source>22</maven.compiler.source>
-    <maven.compiler.target>22</maven.compiler.target>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
   </properties>
 
   <parent>
@@ -78,6 +78,5 @@
       <artifactId>spring-boot-starter-validation</artifactId>
       <version>2.7.6</version>
     </dependency>
-
   </dependencies>
 </project>
