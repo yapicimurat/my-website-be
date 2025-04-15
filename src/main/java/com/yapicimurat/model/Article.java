@@ -34,7 +34,7 @@ public class Article extends BaseModel {
     private String coverImageURL;
 
     @NotNull
-    @Column(name = "READ_TIME_IN_MINUTES")
+    @Column(name = "READ_TIME_IN_MINUTE")
     private int readTimeInMinute;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -93,11 +93,6 @@ public class Article extends BaseModel {
     }
     public List<Comment> getComments() {
         return comments;
-    }
-
-    public int getAmountOfAnswers() {
-        if(Objects.isNull(comments)) return 0;
-        return comments.size();
     }
 
     public void setComments(List<Comment> comments) {

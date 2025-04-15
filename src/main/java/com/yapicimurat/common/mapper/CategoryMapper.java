@@ -14,13 +14,14 @@ import java.util.Set;
 @Mapper(componentModel = "spring")
 public interface CategoryMapper {
     CategoryMapper INSTANCE = Mappers.getMapper(CategoryMapper.class);
-    Category convertCategoryInputDTOToCategoryEntity(CategoryInputDTO source);
-    CategoryDTO convertCategoryEntityToCategoryDTO(Category source);
-    CategoryOutput convertCategoryDTOToCategoryOutput(CategoryDTO source);
-    CategoryInputDTO convertCategoryInputToCategoryInputDTO(CategoryInput source);
-    List<Category> convertCategoryDTOListToCategoryEntityList(List<CategoryDTO> source);
-    List<Category> convertCategoryInputDTOSetToCategoryEntityList(Set<CategoryInputDTO> source);
-    List<CategoryDTO> convertCategoryEntityListToCategoryDTOList(List<Category> categoryList);
-    List<CategoryOutput> convertCategoryDTOListToCategoryOutputList(List<CategoryDTO> categoryDTOList);
-    Set<CategoryInputDTO> convertCategoryInputSetToCategoryInputDTOSet(Set<CategoryInput> categoryInputSet);
+    Category toCategory(CategoryInputDTO source);
+    CategoryDTO toCategoryDTO(Category source);
+    CategoryOutput toCategoryOutput(CategoryDTO source);
+    CategoryInputDTO toCategoryInputDTO(CategoryInput source);
+    List<Category> toCategoryList(List<CategoryDTO> source);
+    List<Category> toCategoryList(Set<CategoryInputDTO> source);
+    List<CategoryDTO> toCategoryDTOList(List<Category> categoryList);
+    List<CategoryOutput> toCategoryOutputList(List<CategoryDTO> categoryDTOList);
+    Set<CategoryInputDTO> toCategoryInputDTOSet(Set<CategoryInput> categoryInputSet);
+    Set<CategoryDTO> toCategoryDTOSet(Set<Category> categorySet);
 }

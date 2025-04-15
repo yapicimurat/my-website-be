@@ -8,6 +8,6 @@ public record ArticleInput(
         String description,
         String htmlContent,
         Byte readTimeInMinute,
-        Set<String> categoryIdList
+        Set<String> categoryIds
 ) {
 }

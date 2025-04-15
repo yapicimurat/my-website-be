@@ -2,14 +2,16 @@ package com.yapicimurat.web.controller;
 
 import com.yapicimurat.common.mapper.CommentMapper;
 import com.yapicimurat.dto.comment.CommentInputDTO;
+import com.yapicimurat.model.projection.CommentSummaryDTO;
 import com.yapicimurat.service.CommentService;
 import com.yapicimurat.web.controller.response.SuccessDataResponse;
 import com.yapicimurat.web.controller.response.DataResponse;
 import com.yapicimurat.web.input.comment.CommentInput;
 import com.yapicimurat.web.output.comment.CommentOutput;
+import com.yapicimurat.web.output.comment.CommentSummaryOutput;
+import com.yapicimurat.web.output.pageable.PageableOutput;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -34,22 +36,21 @@ public class CommentController {
     }
 
     @GetMapping("/{id}/answers")
-    public ResponseEntity<DataResponse<List<CommentOutput>>> getCommentAnswers(@PathVariable("id") String parentCommentId) {
+    public ResponseEntity<DataResponse<PageableOutput<CommentSummaryOutput>>> getCommentAnswers(@PathVariable("id") String parentCommentId,
+                                                                                                @RequestParam(value = "page", required = false) Integer page) {
         return ResponseEntity.ok(
                 SuccessDataResponse.createSuccessDataResponse(
-                        CommentMapper.INSTANCE
-                                .convertCommentDTOListToCommentOutputList(commentService.getCommentAnswers(UUID.fromString(parentCommentId))),
+                        new PageableOutput<>(commentService.getCommentAnswers(UUID.fromString(parentCommentId), page)),
                         ""
                 )
         );
     }
 
     @GetMapping("/article/{articleId}/comment")
-    public ResponseEntity<DataResponse<List<CommentOutput>>> getByArticleId(@PathVariable("articleId") String articleId) {
+    public ResponseEntity<DataResponse<PageableOutput<CommentSummaryDTO>>> getByArticleId(@PathVariable("articleId") String articleId, @RequestParam(value = "page", required = false) Integer page) {
         return ResponseEntity.ok(
                 SuccessDataResponse.createSuccessDataResponse(
-                        CommentMapper.INSTANCE
-                                .convertCommentDTOListToCommentOutputList(commentService.getAllByArticle(UUID.fromString(articleId))),
+                        new PageableOutput<>(commentService.getAllByArticle(UUID.fromString(articleId), page)),
                         ""
                 )
         );

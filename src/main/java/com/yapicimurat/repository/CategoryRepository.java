@@ -10,7 +10,7 @@ import java.util.UUID;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
     List<Category> findAllByIdIn(Set<UUID> ids);
-    boolean existsByName(String name);
-    boolean existsByIdNotAndName(UUID id, String name);
+    boolean existsByNameIgnoreCase(String name);
+    boolean existsByIdNotAndNameIgnoreCase(UUID id, String name);
     long countByNameIn(Set<String> nameSet);
 }

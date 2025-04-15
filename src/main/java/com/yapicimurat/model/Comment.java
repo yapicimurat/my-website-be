@@ -6,6 +6,7 @@ import org.hibernate.annotations.LazyToOneOption;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -43,11 +44,11 @@ public class Comment extends BaseModel {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentComment")
     private List<Comment> answers;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Comment parentComment;
 
     public List<Comment> getNoProxyAnswers() {
-        return this.answers;
+        return answers != null ? this.answers : Collections.emptyList();
     }
     public String getName() {
         return name;

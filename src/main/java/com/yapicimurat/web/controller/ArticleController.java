@@ -6,13 +6,14 @@ import com.yapicimurat.service.ArticleService;
 import com.yapicimurat.web.controller.response.SuccessDataResponse;
 import com.yapicimurat.web.input.article.ArticleInput;
 import com.yapicimurat.web.controller.response.DataResponse;
+import com.yapicimurat.web.output.article.ArticleDetailOutput;
 import com.yapicimurat.web.output.article.ArticleOutput;
+import com.yapicimurat.web.output.article.ArticleSummaryOutput;
 import com.yapicimurat.web.output.pageable.PageableOutput;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
-import javax.validation.constraints.Positive;
 import java.util.UUID;
 
 @RestController
@@ -27,7 +28,7 @@ public class ArticleController {
     }
 
     @GetMapping
-    public ResponseEntity<DataResponse<PageableOutput<ArticleOutput>>> getAll(@Positive @RequestParam(value = "page", required = false) Integer currentPage) {
+    public ResponseEntity<DataResponse<PageableOutput<ArticleSummaryOutput>>> getAll(@RequestParam(value = "page", required = false) Integer currentPage) {
         return ResponseEntity.ok(
                 SuccessDataResponse.createSuccessDataResponse(
                         new PageableOutput<>(articleService.getAll(currentPage)),
@@ -37,10 +38,10 @@ public class ArticleController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DataResponse<ArticleOutput>> getById(@PathVariable("id") String id) {
+    public ResponseEntity<DataResponse<ArticleDetailOutput>> getById(@PathVariable("id") String id) {
         return ResponseEntity.ok(
                 SuccessDataResponse.createSuccessDataResponse(
-                        ArticleMapper.INSTANCE.convertArticleDTOToArticleOutput(articleService.getById(UUID.fromString(id)))
+                        ArticleMapper.INSTANCE.toArticleDetailOutput(articleService.getArticleDetailById(UUID.fromString(id)))
                         ,""
                 )
         );
@@ -48,10 +49,10 @@ public class ArticleController {
 
     @PostMapping
     public ResponseEntity<DataResponse<ArticleOutput>> create(@Valid @RequestBody ArticleInput articleInput) {
-        ArticleInputDTO articleInputDTO = ArticleMapper.INSTANCE.convertArticleInputToArticleInputDTO(articleInput);
+        ArticleInputDTO articleInputDTO = ArticleMapper.INSTANCE.toArticleInputDTO(articleInput);
         return ResponseEntity.ok(
                 SuccessDataResponse.createSuccessDataResponse(
-                        ArticleMapper.INSTANCE.convertArticleDTOToArticleOutput(articleService.create(articleInputDTO))
+                        ArticleMapper.INSTANCE.toArticleOutput(articleService.create(articleInputDTO))
                         ,""
                 )
         );
@@ -60,10 +61,10 @@ public class ArticleController {
     @PutMapping("/{id}")
     public ResponseEntity<DataResponse<ArticleOutput>> updateById(@PathVariable("id") String id,
                                                  @RequestBody ArticleInput articleInput) {
-        ArticleInputDTO articleInputDTO = ArticleMapper.INSTANCE.convertArticleInputToArticleInputDTO(articleInput);
+        ArticleInputDTO articleInputDTO = ArticleMapper.INSTANCE.toArticleInputDTO(articleInput);
         return ResponseEntity.ok(
                 SuccessDataResponse.createSuccessDataResponse(
-                        ArticleMapper.INSTANCE.convertArticleDTOToArticleOutput(articleService.update(id, articleInputDTO))
+                        ArticleMapper.INSTANCE.toArticleOutput(articleService.update(id, articleInputDTO))
                         ,""
                 )
         );

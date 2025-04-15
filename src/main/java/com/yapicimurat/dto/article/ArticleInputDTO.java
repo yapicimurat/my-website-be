@@ -1,8 +1,5 @@
 package com.yapicimurat.dto.article;
 
-import com.yapicimurat.dto.comment.CommentDTO;
-
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -12,7 +9,6 @@ public record ArticleInputDTO (
         String htmlContent,
         String coverImageURL,
         Byte readTimeInMinute,
-        Set<UUID> categoryIdSet,
-        List<CommentDTO> comments
+        Set<UUID> categoryIds
 ) {
 }

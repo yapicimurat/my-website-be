@@ -2,8 +2,8 @@ version: '3'
 
 services:
   mysql-db:
-    image: website_mysql:latest
-    container_name: website_mysql
+    image: my-website-backend-image:latest
+    container_name: my-website-backend-container
     ports:
       - "3306:3306"
     networks:

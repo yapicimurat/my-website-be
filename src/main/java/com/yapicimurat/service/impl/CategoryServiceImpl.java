@@ -24,40 +24,40 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryDTO> getAllByIdIn(Set<UUID> categoryIds) {
         return CategoryMapper.INSTANCE
-                .convertCategoryEntityListToCategoryDTOList(categoryRepository.findAllByIdIn(categoryIds));
+                .toCategoryDTOList(categoryRepository.findAllByIdIn(categoryIds));
     }
 
     @Override
     public List<CategoryDTO> getAll() {
         return CategoryMapper.INSTANCE
-                .convertCategoryEntityListToCategoryDTOList(categoryRepository.findAll());
+                .toCategoryDTOList(categoryRepository.findAll());
     }
 
     @Override
     public CategoryDTO getById(UUID id) throws EntityNotFoundException {
         return categoryRepository.findById(id)
-                .map(CategoryMapper.INSTANCE::convertCategoryEntityToCategoryDTO)
+                .map(CategoryMapper.INSTANCE::toCategoryDTO)
                 .orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
     public Optional<CategoryDTO> getOptionalCategoryDTOById(UUID id) {
         return categoryRepository.findById(id)
-                .map(CategoryMapper.INSTANCE::convertCategoryEntityToCategoryDTO);
+                .map(CategoryMapper.INSTANCE::toCategoryDTO);
     }
 
     @Override
     public boolean existsByName(final String name) {
-        return categoryRepository.existsByName(name);
+        return categoryRepository.existsByNameIgnoreCase(name);
     }
 
     @Override
     public List<CategoryDTO> createAll(final Set<CategoryInputDTO> categoryInputDTOSet) {
         checkAtLeastOneNameExists(categoryInputDTOSet.stream().map(CategoryInputDTO::name).collect(Collectors.toUnmodifiableSet()));
         List<Category> categoryEntityList = CategoryMapper.INSTANCE
-                .convertCategoryInputDTOSetToCategoryEntityList(categoryInputDTOSet);
+                .toCategoryList(categoryInputDTOSet);
         return CategoryMapper.INSTANCE
-                .convertCategoryEntityListToCategoryDTOList(categoryRepository.saveAll(categoryEntityList));
+                .toCategoryDTOList(categoryRepository.saveAll(categoryEntityList));
     }
 
     @Override
@@ -73,13 +73,13 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryDTO saveCategory(@Nullable UUID id, CategoryInputDTO categoryInputDTO) {
         performPreChecksToSaveCategory(id, categoryInputDTO);
         final Category categoryToSave = CategoryMapper.INSTANCE.
-                convertCategoryInputDTOToCategoryEntity(categoryInputDTO);
+                toCategory(categoryInputDTO);
         if(Objects.nonNull(id)) {
             categoryToSave.setId(id);
         }
 
         return CategoryMapper.INSTANCE
-                .convertCategoryEntityToCategoryDTO(categoryRepository.save(categoryToSave));
+                .toCategoryDTO(categoryRepository.save(categoryToSave));
     }
 
     private void checkAtLeastOneNameExists(Set<String> nameSet) {
@@ -90,12 +90,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     private void performPreChecksToSaveCategory(@Nullable UUID id, CategoryInputDTO categoryInputDTO) {
         if(Objects.nonNull(id)) {
-            if(categoryRepository.existsByIdNotAndName(id, categoryInputDTO.name())) {
+            if(categoryRepository.existsByIdNotAndNameIgnoreCase(id, categoryInputDTO.name())) {
                 throw new EntityAlreadyExistsException();
             }
         }
 
-        if(categoryRepository.existsByName(categoryInputDTO.name())) {
+        if(categoryRepository.existsByNameIgnoreCase(categoryInputDTO.name())) {
             throw new EntityAlreadyExistsException();
         }
     }

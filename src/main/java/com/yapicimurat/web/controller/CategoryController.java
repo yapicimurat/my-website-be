@@ -26,7 +26,7 @@ public class CategoryController {
     public ResponseEntity<DataResponse<List<CategoryOutput>>> getAll() {
         return ResponseEntity.ok(
                 SuccessDataResponse.createSuccessDataResponse(
-                        CategoryMapper.INSTANCE.convertCategoryDTOListToCategoryOutputList(categoryService.getAll()),
+                        CategoryMapper.INSTANCE.toCategoryOutputList(categoryService.getAll()),
                         ""
                 )
         );
@@ -37,7 +37,7 @@ public class CategoryController {
         return ResponseEntity.ok(
                 SuccessDataResponse.createSuccessDataResponse(
                         CategoryMapper.INSTANCE
-                                .convertCategoryDTOToCategoryOutput(categoryService.getById(UUID.fromString(id))),
+                                .toCategoryOutput(categoryService.getById(UUID.fromString(id))),
                         ""
                 )
         );
@@ -45,12 +45,12 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<DataResponse<CategoryOutput>> create(@Valid @RequestBody CategoryInput categoryInput) {
-        CategoryInputDTO categoryInputDTO = CategoryMapper.INSTANCE.convertCategoryInputToCategoryInputDTO(categoryInput);
+        CategoryInputDTO categoryInputDTO = CategoryMapper.INSTANCE.toCategoryInputDTO(categoryInput);
 
         return ResponseEntity.ok(
                 SuccessDataResponse.createSuccessDataResponse(
                         CategoryMapper.INSTANCE
-                                .convertCategoryDTOToCategoryOutput(categoryService.create(categoryInputDTO)),
+                                .toCategoryOutput(categoryService.create(categoryInputDTO)),
                         ""
                 )
         );
@@ -59,12 +59,12 @@ public class CategoryController {
     @PostMapping("/create-all")
     public ResponseEntity<DataResponse<List<CategoryOutput>>> createAll(@RequestBody Set<CategoryInput> categoryInputSet) {
         Set<CategoryInputDTO> categoryInputDTOSet = CategoryMapper.INSTANCE
-                .convertCategoryInputSetToCategoryInputDTOSet(categoryInputSet);
+                .toCategoryInputDTOSet(categoryInputSet);
 
         return ResponseEntity.ok(
                 SuccessDataResponse.createSuccessDataResponse(
                         CategoryMapper.INSTANCE
-                                .convertCategoryDTOListToCategoryOutputList(categoryService.createAll(categoryInputDTOSet)),
+                                .toCategoryOutputList(categoryService.createAll(categoryInputDTOSet)),
                         ""
                 )
         );
@@ -73,12 +73,12 @@ public class CategoryController {
     @PutMapping("/{id}")
     public ResponseEntity<DataResponse<CategoryOutput>> updateById(@PathVariable("id") String id, @RequestBody CategoryInput categoryInput) {
         CategoryInputDTO categoryInputDTO = CategoryMapper.INSTANCE
-                .convertCategoryInputToCategoryInputDTO(categoryInput);
+                .toCategoryInputDTO(categoryInput);
 
         return ResponseEntity.ok(
                 SuccessDataResponse.createSuccessDataResponse(
                         CategoryMapper.INSTANCE
-                                .convertCategoryDTOToCategoryOutput(categoryService.updateById(
+                                .toCategoryOutput(categoryService.updateById(
                                         UUID.fromString(id),
                                         categoryInputDTO
                                 )),
