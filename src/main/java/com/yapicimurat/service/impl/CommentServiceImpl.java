@@ -14,12 +14,12 @@ import com.yapicimurat.repository.CommentRepository;
 import com.yapicimurat.service.ArticleService;
 import com.yapicimurat.service.CommentService;
 import com.yapicimurat.util.CommonUtil;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,7 +49,8 @@ public class CommentServiceImpl implements CommentService {
         currentPage = CommonUtil.clampDataPageNumber(currentPage - 1);
         Pageable page = PageRequest.of(currentPage, TOTAL_COMMENTS_IN_A_PAGE);
         Page<Comment> comments = commentRepository.getAllCommentsByArticleIdDesc(page, articleId);
-        List<CommentSummaryDTO> commentSummaryDTOList = createCommentSummaryDTOList(comments.getContent(), Strings.EMPTY);
+
+        List<CommentSummaryDTO> commentSummaryDTOList = createCommentSummaryDTOList(comments.getContent());
         return new PageableDTO<>(
                 commentSummaryDTOList,
                 comments.getTotalPages(),
@@ -60,39 +61,30 @@ public class CommentServiceImpl implements CommentService {
         );
     }
 
-    private List<CommentSummaryDTO> createCommentSummaryDTOList(List<Comment> comments, String parentCommentId) {
-        if(Objects.nonNull(comments)) {
+    private List<CommentSummaryDTO> createCommentSummaryDTOList(List<Comment> comments) {
+        if (Objects.nonNull(comments)) {
             Set<UUID> commentIdSet = comments.stream().map(Comment::getId).collect(Collectors.toSet());
             List<CommentAnswerCountDTO> commentAnswerCountDTOList = commentRepository.getAnswerCommentAmountsOfParentComments(commentIdSet);
-            Map<UUID, Integer> commentsCountMappedByCommentId = commentAnswerCountDTOList.stream()
+            Map<UUID, CommentAnswerCountDTO> commentsCountMappedByCommentId = commentAnswerCountDTOList.stream()
                     .collect(Collectors.toMap(
                             CommentAnswerCountDTO::id,
-                            CommentAnswerCountDTO::count));
-            return comments.stream().map(comment -> {
-                Integer amountOfComment = commentsCountMappedByCommentId.get(comment.getId());
-                return new CommentSummaryDTO(
-                  comment.getId().toString(),
-                  comment.getName(),
-                        comment.getLastName(),
-                        comment.getEmail(),
-                        comment.getText(),
-                        comment.getAnswer(),
-                        Objects.nonNull(amountOfComment) ? amountOfComment : 0,
-                        comment.getCreatedAt(),
-                        parentCommentId
-                );
-            })
-            .toList();
+                            commentAnswerCountDTO -> commentAnswerCountDTO));
+            return comments.stream().filter(Objects::nonNull).map(comment -> {
+                        CommentAnswerCountDTO commentAnswerCountDTO = commentsCountMappedByCommentId.get(comment.getId());
+                        int amountOfComment = commentAnswerCountDTO.count();
+                        return CommentMapper.INSTANCE.toCommentSummaryDTO(comment, amountOfComment);
+                    })
+                    .toList();
         }
         return null;
     }
 
     @Override
-    public PageableDTO<CommentSummaryDTO> getCommentAnswers(UUID parentCommentId, Integer currentPage) {
+    public PageableDTO<CommentSummaryDTO> getCommentAnswers(UUID rootCommentId, Integer currentPage) {
         currentPage = CommonUtil.clampDataPageNumber(currentPage - 1);
         Pageable page = PageRequest.of(currentPage, TOTAL_COMMENTS_IN_A_PAGE);
-        Page<Comment> answers = commentRepository.getAnswerCommentsByParentCommentId(page, parentCommentId);
-        List<CommentSummaryDTO> commentSummaryDTOList = createCommentSummaryDTOList(answers.getContent(), String.valueOf(parentCommentId));
+        Page<Comment> answers = commentRepository.getAnswerCommentsByRootCommentId(page, rootCommentId);
+        List<CommentSummaryDTO> commentSummaryDTOList = createCommentSummaryDTOList(answers.getContent());
         return new PageableDTO<>(
                 commentSummaryDTOList,
                 answers.getTotalPages(),
@@ -152,7 +144,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private void checkCommentIsExistById(UUID id) {
-        if(!commentRepository.existsById(id)) {
+        if (!commentRepository.existsById(id)) {
             throw new EntityNotFoundException();
         }
     }

@@ -29,4 +29,8 @@ public interface CommentMapper {
     List<CommentOutput> convertCommentDTOListToCommentOutputList(List<CommentDTO> source);
     List<CommentSummaryDTO> toCommentSummaryDTOList(List<Comment> source);
     List<CommentSummaryOutput> toCommentSummaryOutputList(List<CommentSummaryDTO> source);
+    CommentSummaryDTO toCommentSummaryDTO(Comment source);
+
+    @Mapping(target = "amountOfAnswers", expression = "java(amountOfAnswers)")
+    CommentSummaryDTO toCommentSummaryDTO(Comment source, int amountOfAnswers);
 }

@@ -36,11 +36,11 @@ public class CommentController {
     }
 
     @GetMapping("/{id}/answers")
-    public ResponseEntity<DataResponse<PageableOutput<CommentSummaryOutput>>> getCommentAnswers(@PathVariable("id") String parentCommentId,
+    public ResponseEntity<DataResponse<PageableOutput<CommentSummaryOutput>>> getCommentAnswers(@PathVariable("id") String rootCommentId,
                                                                                                 @RequestParam(value = "page", required = false) Integer page) {
         return ResponseEntity.ok(
                 SuccessDataResponse.createSuccessDataResponse(
-                        new PageableOutput<>(commentService.getCommentAnswers(UUID.fromString(parentCommentId), page)),
+                        new PageableOutput<>(commentService.getCommentAnswers(UUID.fromString(rootCommentId), page)),
                         ""
                 )
         );

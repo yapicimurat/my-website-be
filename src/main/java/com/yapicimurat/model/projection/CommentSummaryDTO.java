@@ -11,6 +11,7 @@ public record CommentSummaryDTO(
         Boolean isAnswer,
         int amountOfAnswers,
         LocalDateTime createdAt,
-        String parentCommentId
+        CommentSummaryDTO parentComment,
+        CommentSummaryDTO rootComment
 ) {
 }

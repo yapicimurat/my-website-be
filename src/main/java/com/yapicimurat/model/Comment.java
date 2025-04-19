@@ -47,6 +47,10 @@ public class Comment extends BaseModel {
     @ManyToOne(fetch = FetchType.LAZY)
     private Comment parentComment;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "root_comment_id")
+    private Comment rootComment;
+
     public List<Comment> getNoProxyAnswers() {
         return answers != null ? this.answers : Collections.emptyList();
     }
@@ -112,5 +116,13 @@ public class Comment extends BaseModel {
 
     public void setParentComment(Comment parentComment) {
         this.parentComment = parentComment;
+    }
+
+    public Comment getRootComment() {
+        return rootComment;
+    }
+
+    public void setRootComment(Comment rootComment) {
+        this.rootComment = rootComment;
     }
 }

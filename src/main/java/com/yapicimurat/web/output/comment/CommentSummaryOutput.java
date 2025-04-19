@@ -10,6 +10,8 @@ public record CommentSummaryOutput(
         String text,
         Boolean isAnswer,
         int amountOfAnswers,
+        CommentSummaryOutput parentComment,
+        CommentSummaryOutput rootComment,
         LocalDateTime createdAt
 ) {
 }
